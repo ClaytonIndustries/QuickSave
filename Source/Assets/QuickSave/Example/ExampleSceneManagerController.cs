@@ -4,10 +4,6 @@ using UnityEngine;
 
 public class ExampleSceneManagerController : MonoBehaviour
 {
-    public void Start()
-    {
-    }
-
     public void Save()
     {
         Class1 one = new Class1()
