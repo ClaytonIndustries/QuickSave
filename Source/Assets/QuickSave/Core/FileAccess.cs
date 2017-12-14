@@ -5,7 +5,7 @@ namespace CI.QuickSave.Core
 {
     public static class FileAccess
     {
-        private static readonly string _basePath = Path.Combine(Application.persistentDataPath, "SaveManager");
+        private static readonly string _basePath = Path.Combine(Application.persistentDataPath, "QuickSave");
         private static readonly string _extension = ".json";
 
         public static bool Save(string filename, string value)

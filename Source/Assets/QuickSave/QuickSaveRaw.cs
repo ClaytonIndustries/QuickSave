@@ -49,7 +49,7 @@ namespace CI.QuickSave
             }
         }
 
-        public static T Load<T>(string root, SecurityMode securityMode, QuickSaveSettings settings)
+        public static T Load<T>(string root, QuickSaveSettings settings)
         {
             try
             {

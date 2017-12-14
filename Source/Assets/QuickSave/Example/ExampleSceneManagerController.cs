@@ -10,10 +10,6 @@ public class ExampleSceneManagerController : MonoBehaviour
 
     public void Save()
     {
-        QuickSaveRaw.Save("Root3", new byte[] { 1, 2, 3, 4, 5 });
-
-        QuickSaveManager.Save("Root1", "Key1", new Class2(), false);
-
         Class1 one = new Class1()
         {
             ItemD = 12,
@@ -35,9 +31,6 @@ public class ExampleSceneManagerController : MonoBehaviour
             KeyA = 12
         };
 
-        //SaveManager.Save("Root1", "Key1", one, true);
-        //SaveManager.Save("Root1", "Key2", two, true);
-
         QuickSaveWriter writer = QuickSaveWriter.Create("Root2");
         writer.Write("Key1", one, true);
         writer.Write("Key2", two, true);
@@ -46,10 +39,6 @@ public class ExampleSceneManagerController : MonoBehaviour
 
     public void Load()
     {
-        byte[] bytes = QuickSaveRaw.Load<byte[]>("Root3");
-
-        //Class2 result = SaveManager.Load<Class2>("Root1", "Key2");
-
         QuickSaveReader reader = QuickSaveReader.Create("Root2");
         var one = reader.Read<Class1>("Key1");
         var two = reader.Read<Class2>("Key2");
