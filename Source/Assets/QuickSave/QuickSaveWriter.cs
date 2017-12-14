@@ -7,17 +7,24 @@ namespace CI.QuickSave
     public class QuickSaveWriter
     {
         private readonly string _root;
+        private readonly QuickSaveSettings _settings;
 
         private Dictionary<string, object> _items;
 
-        private QuickSaveWriter(string root)
+        private QuickSaveWriter(string root, QuickSaveSettings settings)
         {
             _root = root;
+            _settings = settings;
         }
 
         public static QuickSaveWriter Create(string root)
         {
-            QuickSaveWriter saveManagerWriter = new QuickSaveWriter(root);
+            return Create(root, new QuickSaveSettings());
+        }
+
+        public static QuickSaveWriter Create(string root, QuickSaveSettings settings)
+        {
+            QuickSaveWriter saveManagerWriter = new QuickSaveWriter(root, settings);
             saveManagerWriter.Open();
             return saveManagerWriter;
         }
@@ -58,7 +65,9 @@ namespace CI.QuickSave
             {
                 string jsonToSave = JsonSerialiser.Serialise(_items);
 
-                FileAccess.Save(_root, jsonToSave);
+                string encryptedJson = Cryptography.Encrypt(jsonToSave, _settings.SecurityMode, _settings.Password);
+
+                FileAccess.Save(_root, encryptedJson);
             }
             catch (Exception e)
             {
@@ -79,7 +88,9 @@ namespace CI.QuickSave
 
             try
             {
-                _items = JsonSerialiser.Deserialise<Dictionary<string, object>>(fileJson) ?? new Dictionary<string, object>();
+                string decryptedJson = Cryptography.Decrypt(fileJson, _settings.SecurityMode, _settings.Password);
+
+                _items = JsonSerialiser.Deserialise<Dictionary<string, object>>(decryptedJson) ?? new Dictionary<string, object>();
             }
             catch (Exception e)
             {

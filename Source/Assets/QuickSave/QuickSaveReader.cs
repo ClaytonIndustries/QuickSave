@@ -8,17 +8,24 @@ namespace CI.QuickSave
     public class QuickSaveReader
     {
         private readonly string _root;
+        private readonly QuickSaveSettings _settings;
 
         private Dictionary<string, object> _items;
 
-        private QuickSaveReader(string root)
+        private QuickSaveReader(string root, QuickSaveSettings settings)
         {
             _root = root;
+            _settings = settings;
         }
 
         public static QuickSaveReader Create(string root)
         {
-            QuickSaveReader saveManagerReader = new QuickSaveReader(root);
+            return Create(root, new QuickSaveSettings());
+        }
+
+        public static QuickSaveReader Create(string root, QuickSaveSettings settings)
+        {
+            QuickSaveReader saveManagerReader = new QuickSaveReader(root, settings);
             saveManagerReader.Open();
             return saveManagerReader;
         }
@@ -86,7 +93,9 @@ namespace CI.QuickSave
 
             try
             {
-                _items = JsonSerialiser.Deserialise<Dictionary<string, object>>(fileJson);
+                string decryptedJson = Cryptography.Decrypt(fileJson, _settings.SecurityMode, _settings.Password);
+
+                _items = JsonSerialiser.Deserialise<Dictionary<string, object>>(decryptedJson);
 
                 if(_items != null)
                 {
@@ -97,6 +106,8 @@ namespace CI.QuickSave
             {
                 throw new InvalidOperationException("Unable to load data", e);
             }
+
+            throw new InvalidOperationException("Unable to load data");
         }
     }
 }
