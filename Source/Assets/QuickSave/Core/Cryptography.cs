@@ -7,7 +7,33 @@ namespace CI.QuickSave.Core
 {
     public static class Cryptography
     {
-        public static string AesEncrypt(string encryptionKey, string value)
+        public static string Encrypt(string value, SecurityMode securityMode, string password)
+        {
+            switch(securityMode)
+            {
+                case SecurityMode.Aes:
+                    return AesEncrypt(password, value);
+                case SecurityMode.Base64:
+                    return Base64Encode(value);
+                default:
+                    return value;
+            }
+        }
+
+        public static string Decrypt(string value, SecurityMode securityMode, string password)
+        {
+            switch (securityMode)
+            {
+                case SecurityMode.Aes:
+                    return AesDecrypt(password, value);
+                case SecurityMode.Base64:
+                    return Base64Decode(value);
+                default:
+                    return value;
+            }
+        }
+
+        private static string AesEncrypt(string encryptionKey, string value)
         {
             if (string.IsNullOrEmpty(value))
             {
@@ -36,7 +62,7 @@ namespace CI.QuickSave.Core
             }
         }
 
-        public static string AesDecrypt(string encryptionKey, string value)
+        private static string AesDecrypt(string encryptionKey, string value)
         {
             if (string.IsNullOrEmpty(value))
             {
@@ -66,12 +92,12 @@ namespace CI.QuickSave.Core
             }
         }
 
-        public static string Base64Encode(string value)
+        private static string Base64Encode(string value)
         {
             return Convert.ToBase64String(Encoding.UTF8.GetBytes(value));
         }
 
-        public static string Base64Decode(string value)
+        private static string Base64Decode(string value)
         {
             return Encoding.UTF8.GetString(Convert.FromBase64String(value));
         }
