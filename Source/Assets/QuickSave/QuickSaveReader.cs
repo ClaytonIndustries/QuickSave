@@ -72,7 +72,7 @@ namespace CI.QuickSave
             }
         }
 
-        public bool KeyExists(string key)
+        public bool Exists(string key)
         {
             return _items.ContainsKey(key);
         }

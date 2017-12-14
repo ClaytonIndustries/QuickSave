@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using CI.QuickSave.Core;
 
 namespace CI.QuickSave
@@ -46,6 +47,25 @@ namespace CI.QuickSave
             _items.Add(key, value);
         }
 
+        public bool TryWrite<T>(string key, T value, bool replace)
+        {
+            if (_items.ContainsKey(key))
+            {
+                if (replace)
+                {
+                    _items.Remove(key);
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            _items.Add(key, value);
+
+            return true;
+        }
+
         public void Delete(string key)
         {
             if (_items.ContainsKey(key))
@@ -54,9 +74,14 @@ namespace CI.QuickSave
             }
         }
 
-        public bool KeyExists(string key)
+        public bool Exists(string key)
         {
             return _items.ContainsKey(key);
+        }
+
+        public IEnumerable<string> GetAllKeys()
+        {
+            return _items.Keys.ToList();
         }
 
         public void Commit()
@@ -72,6 +97,24 @@ namespace CI.QuickSave
             catch (Exception e)
             {
                 throw new InvalidOperationException("Unable to save data", e);
+            }
+        }
+
+        public bool TryCommit()
+        {
+            try
+            {
+                string jsonToSave = JsonSerialiser.Serialise(_items);
+
+                string encryptedJson = Cryptography.Encrypt(jsonToSave, _settings.SecurityMode, _settings.Password);
+
+                FileAccess.Save(_root, encryptedJson);
+
+                return true;
+            }
+            catch
+            {
+                return false;
             }
         }
 
