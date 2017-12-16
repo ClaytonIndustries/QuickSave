@@ -26,11 +26,22 @@ namespace CI.QuickSave
             _settings = settings;
         }
 
+        /// <summary>
+        /// Creates a QuickSaveWriter on the specified root
+        /// </summary>
+        /// <param name="root">The root to write to</param>
+        /// <returns>A QuickSaveWriter instance</returns>
         public static QuickSaveWriter Create(string root)
         {
             return Create(root, new QuickSaveSettings());
         }
 
+        /// <summary>
+        /// Creates a QuickSaveWriter on the specified root using the specified settings
+        /// </summary>
+        /// <param name="root">The root to write to</param>
+        /// <param name="settings">Settings</param>
+        /// <returns>A QuickSaveWriter instance</returns>
         public static QuickSaveWriter Create(string root, QuickSaveSettings settings)
         {
             QuickSaveWriter quickSaveWriter = new QuickSaveWriter(root, settings);
@@ -38,6 +49,13 @@ namespace CI.QuickSave
             return quickSaveWriter;
         }
 
+        /// <summary>
+        /// Write an object to the specified key
+        /// </summary>
+        /// <typeparam name="T">The type of object to write</typeparam>
+        /// <param name="key">The key this object will be saved under</param>
+        /// <param name="value">The object to save</param>
+        /// <param name="replace">If the key already exists should it be overwitten</param>
         public void Write<T>(string key, T value, bool replace)
         {
             if (_items.ContainsKey(key))
@@ -55,6 +73,14 @@ namespace CI.QuickSave
             _items.Add(key, value);
         }
 
+        /// <summary>
+        /// Attempts to write an object to the specified key
+        /// </summary>
+        /// <typeparam name="T">The type of object to write</typeparam>
+        /// <param name="key">The key this object will be saved under</param>
+        /// <param name="value">The object to save</param>
+        /// <param name="replace">If the key already exists should it be overwitten</param>
+        /// <returns>Was the write successful</returns>
         public bool TryWrite<T>(string key, T value, bool replace)
         {
             if (_items.ContainsKey(key))
@@ -74,6 +100,10 @@ namespace CI.QuickSave
             return true;
         }
 
+        /// <summary>
+        /// Delete the specified key if it exists
+        /// </summary>
+        /// <param name="key">The key to delete</param>
         public void Delete(string key)
         {
             if (_items.ContainsKey(key))
@@ -82,16 +112,28 @@ namespace CI.QuickSave
             }
         }
 
+        /// <summary>
+        /// Determines if the specified key exists
+        /// </summary>
+        /// <param name="key">The key to look for</param>
+        /// <returns>Does the key exist</returns>
         public bool Exists(string key)
         {
             return _items.ContainsKey(key);
         }
 
+        /// <summary>
+        /// Get the names of all the keys
+        /// </summary>
+        /// <returns>A collection of key names</returns>
         public IEnumerable<string> GetAllKeys()
         {
             return _items.Keys.ToList();
         }
 
+        /// <summary>
+        /// Write the changes to file
+        /// </summary>
         public void Commit()
         {
             try
@@ -108,6 +150,10 @@ namespace CI.QuickSave
             }
         }
 
+        /// <summary>
+        /// Attempt to write the changes to file
+        /// </summary>
+        /// <returns>Was the write successful</returns>
         public bool TryCommit()
         {
             try

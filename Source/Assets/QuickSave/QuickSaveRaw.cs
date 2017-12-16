@@ -13,11 +13,24 @@ namespace CI.QuickSave
 {
     public class QuickSaveRaw
     {
+        /// <summary>
+        /// Save an object to a file
+        /// </summary>
+        /// <typeparam name="T">The type of object to save</typeparam>
+        /// <param name="root">The root this object will be saved under</param>
+        /// <param name="value">The object to save</param>
         public static void Save<T>(string root, T value)
         {
             Save(root, value, new QuickSaveSettings());
         }
 
+        /// <summary>
+        /// Save an object to a file using the specified settings
+        /// </summary>
+        /// <typeparam name="T">The type of object to save</typeparam>
+        /// <param name="root">The root this object will be saved under</param>
+        /// <param name="value">The object to save</param>
+        /// <param name="settings">Settings</param>
         public static void Save<T>(string root, T value, QuickSaveSettings settings)
         {
             try
@@ -34,11 +47,24 @@ namespace CI.QuickSave
             }
         }
 
+        /// <summary>
+        /// Load an object from a file
+        /// </summary>
+        /// <typeparam name="T">The type of object to load</typeparam>
+        /// <param name="root">The root this object was saved under</param>
+        /// <returns>The object that was loaded</returns>
         public static T Load<T>(string root)
         {
             return Load<T>(root, new QuickSaveSettings());
         }
 
+        /// <summary>
+        /// Load an object from a file using the specified settings
+        /// </summary>
+        /// <typeparam name="T">The type of object to load</typeparam>
+        /// <param name="root">The root this object was saved under</param>
+        /// <param name="settings">Settings</param>
+        /// <returns>The object that was loaded</returns>
         public static T Load<T>(string root, QuickSaveSettings settings)
         {
             try

@@ -26,11 +26,22 @@ namespace CI.QuickSave
             _settings = settings;
         }
 
+        /// <summary>
+        /// Creates a QuickSaveReader on the specified root
+        /// </summary>
+        /// <param name="root">The root to read from</param>
+        /// <returns>A QuickSaveReader instance</returns>
         public static QuickSaveReader Create(string root)
         {
             return Create(root, new QuickSaveSettings());
         }
 
+        /// <summary>
+        /// Creates a QuickSaveReader on the specified root using the specified settings
+        /// </summary>
+        /// <param name="root">The root to read from</param>
+        /// <param name="settings">Settings</param>
+        /// <returns>A QuickSaveReader instance</returns>
         public static QuickSaveReader Create(string root, QuickSaveSettings settings)
         {
             QuickSaveReader quickSaveReader = new QuickSaveReader(root, settings);
@@ -38,6 +49,12 @@ namespace CI.QuickSave
             return quickSaveReader;
         }
 
+        /// <summary>
+        /// Read an object under the specified key
+        /// </summary>
+        /// <typeparam name="T">The type of object to read</typeparam>
+        /// <param name="key">The key this object was saved under</param>
+        /// <returns>The object that was loaded</returns>
         public T Read<T>(string key)
         {
             if (!_items.ContainsKey(key))
@@ -57,6 +74,13 @@ namespace CI.QuickSave
             }
         }
 
+        /// <summary>
+        /// Attempt to read an object under the specified key
+        /// </summary>
+        /// <typeparam name="T">The type of object to read</typeparam>
+        /// <param name="key">The key this object was saved under</param>
+        /// <param name="result">The object that was loaded</param>
+        /// <returns>Was the read successful</returns>
         public bool TryRead<T>(string key, out T result)
         {
             result = default(T);
@@ -80,11 +104,20 @@ namespace CI.QuickSave
             }
         }
 
+        /// <summary>
+        /// Determines if the specified key exists
+        /// </summary>
+        /// <param name="key">The key to look for</param>
+        /// <returns>Does the key exist</returns>
         public bool Exists(string key)
         {
             return _items.ContainsKey(key);
         }
 
+        /// <summary>
+        /// Get the names of all the keys
+        /// </summary>
+        /// <returns>A collection of key names</returns>
         public IEnumerable<string> GetAllKeys()
         {
             return _items.Keys.ToList();
