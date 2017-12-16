@@ -1,4 +1,12 @@
-﻿#if NETFX_CORE
+﻿////////////////////////////////////////////////////////////////////////////////
+//  
+// @module Quick Save for Unity3D 
+// @author Michael Clayton
+// @support clayton.inds+support@gmail.com 
+//
+////////////////////////////////////////////////////////////////////////////////
+
+#if NETFX_CORE
 using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.Core;
 using Windows.Storage.Streams;
