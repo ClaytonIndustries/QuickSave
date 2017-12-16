@@ -50,7 +50,7 @@ namespace CI.QuickSave
         }
 
         /// <summary>
-        /// Read an object under the specified key
+        /// Reads an object under the specified key
         /// </summary>
         /// <typeparam name="T">The type of object to read</typeparam>
         /// <param name="key">The key this object was saved under</param>
@@ -75,7 +75,35 @@ namespace CI.QuickSave
         }
 
         /// <summary>
-        /// Attempt to read an object under the specified key
+        /// Reads an object under the specified key
+        /// </summary>
+        /// <typeparam name="T">The type of object to read</typeparam>
+        /// <param name="key">The key this object was saved under</param>
+        /// <param name="result">An action to be called when the read completes</param>
+        /// <returns>The QuickSaveReader</returns>
+        public QuickSaveReader Read<T>(string key, Action<T> result)
+        {
+            if (!_items.ContainsKey(key))
+            {
+                throw new ArgumentException("Key does not exists");
+            }
+
+            try
+            {
+                string propertyJson = JsonSerialiser.Serialise(_items[key]);
+
+                result(JsonSerialiser.Deserialise<T>(propertyJson));
+            }
+            catch
+            {
+                throw new InvalidOperationException("Unable to deserialise data");
+            }
+
+            return this;
+        }
+
+        /// <summary>
+        /// Attempts to read an object under the specified key
         /// </summary>
         /// <typeparam name="T">The type of object to read</typeparam>
         /// <param name="key">The key this object was saved under</param>
@@ -115,7 +143,7 @@ namespace CI.QuickSave
         }
 
         /// <summary>
-        /// Get the names of all the keys
+        /// Gets the names of all the keys
         /// </summary>
         /// <returns>A collection of key names</returns>
         public IEnumerable<string> GetAllKeys()
