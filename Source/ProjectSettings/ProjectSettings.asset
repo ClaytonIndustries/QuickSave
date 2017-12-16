@@ -537,7 +537,8 @@ PlayerSettings:
   webGLCompressionFormat: 1
   scriptingDefineSymbols: {}
   platformArchitecture: {}
-  scriptingBackend: {}
+  scriptingBackend:
+    Metro: 2
   incrementalIl2cppBuild: {}
   additionalIl2CppArgs: 
   scriptingRuntimeVersion: 0
@@ -546,11 +547,11 @@ PlayerSettings:
   m_MobileRenderingPath: 1
   metroPackageName: Quick Save
   metroPackageVersion: 
-  metroCertificatePath: 
+  metroCertificatePath: C:\Users\mike-\Documents\Projects\quick-save\Source\Assets\WSATestCertificate.pfx
   metroCertificatePassword: 
-  metroCertificateSubject: 
-  metroCertificateIssuer: 
-  metroCertificateNotAfter: 0000000000000000
+  metroCertificateSubject: DefaultCompany
+  metroCertificateIssuer: DefaultCompany
+  metroCertificateNotAfter: 0087d661f394d401
   metroApplicationDescription: Quick Save
   wsaImages: {}
   metroTileShortName: 

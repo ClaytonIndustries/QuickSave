@@ -1,79 +1,38 @@
-﻿using System.IO;
-using UnityEngine;
+﻿using System.Collections.Generic;
 
 namespace CI.QuickSave.Core
 {
     public static class FileAccess
     {
-        private static readonly string _basePath = Path.Combine(Application.persistentDataPath, "QuickSave");
-        private static readonly string _extension = ".json";
+#if !NETFX_CORE
+        private static IFileAccess _storage = new FileAccessMono();
+#else
+        private static IFileAccess _storage = new FileAccessUWP();
+#endif
 
-        public static bool Save(string filename, string value)
+        public static void Save(string filename, string value)
         {
-            try
-            {
-                CreateRootFolder();
-
-                using (StreamWriter writer = new StreamWriter(Path.Combine(_basePath, filename + _extension)))
-                {
-                    writer.Write(value);
-                }
-
-                return true;
-            }
-            catch
-            {
-            }
-
-            return false;
+            _storage.Save(filename, value);
         }
 
         public static string Load(string filename)
         {
-            try
-            {
-                CreateRootFolder();
-
-                using (StreamReader reader = new StreamReader(Path.Combine(_basePath, filename + _extension)))
-                {
-                    return reader.ReadToEnd();
-                }
-            }
-            catch
-            {
-            }
-
-            return null;
+            return _storage.Load(filename);
         }
 
         public static void Delete(string filename)
         {
-            try
-            {
-                CreateRootFolder();
-
-                string fileLocation = Path.Combine(_basePath, filename + _extension);
-
-                File.Delete(fileLocation);
-            }
-            catch
-            {
-            }
+            _storage.Delete(filename);
         }
 
-        public static bool FileExists(string filename)
+        public static bool Exists(string filename)
         {
-            string fileLocation = Path.Combine(_basePath, filename + _extension);
-
-            return File.Exists(fileLocation);
+            return _storage.Exists(filename);
         }
 
-        private static void CreateRootFolder()
+        public static IEnumerable<string> Files()
         {
-            if (!Directory.Exists(_basePath))
-            {
-                Directory.CreateDirectory(_basePath);
-            }
+            return _storage.Files();
         }
     }
 }

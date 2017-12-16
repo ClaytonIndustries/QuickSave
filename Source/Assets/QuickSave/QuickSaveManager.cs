@@ -101,7 +101,12 @@ namespace CI.QuickSave
 
         public static bool Exists(string root)
         {
-            return FileAccess.FileExists(root);
+            return FileAccess.Exists(root);
+        }
+
+        public static IEnumerable<string> GetAllRoots()
+        {
+            return FileAccess.Files();
         }
     }
 }

@@ -25,9 +25,9 @@ namespace CI.QuickSave
 
         public static QuickSaveWriter Create(string root, QuickSaveSettings settings)
         {
-            QuickSaveWriter saveManagerWriter = new QuickSaveWriter(root, settings);
-            saveManagerWriter.Open();
-            return saveManagerWriter;
+            QuickSaveWriter quickSaveWriter = new QuickSaveWriter(root, settings);
+            quickSaveWriter.Open();
+            return quickSaveWriter;
         }
 
         public void Write<T>(string key, T value, bool replace)

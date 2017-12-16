@@ -25,9 +25,9 @@ namespace CI.QuickSave
 
         public static QuickSaveReader Create(string root, QuickSaveSettings settings)
         {
-            QuickSaveReader saveManagerReader = new QuickSaveReader(root, settings);
-            saveManagerReader.Open();
-            return saveManagerReader;
+            QuickSaveReader quickSaveReader = new QuickSaveReader(root, settings);
+            quickSaveReader.Open();
+            return quickSaveReader;
         }
 
         public T Read<T>(string key)
