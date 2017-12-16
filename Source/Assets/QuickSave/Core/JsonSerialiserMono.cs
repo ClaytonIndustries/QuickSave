@@ -3,7 +3,6 @@ using JsonFx.Json;
 using JsonFx.Json.Resolvers;
 using JsonFx.Serialization;
 using JsonFx.Serialization.Resolvers;
-using JsonFx.Xml.Resolvers;
 
 namespace CI.QuickSave.Core
 {
@@ -20,19 +19,7 @@ namespace CI.QuickSave.Core
 
         public T Deserialise<T>(string json)
         {
-            //CombinedResolverStrategy resolver = new CombinedResolverStrategy(new JsonResolverStrategy());
-
-            // Some way to prevent circular objects
-
-            var resolver = new CombinedResolverStrategy(
-                new JsonResolverStrategy(),                                                             // simple JSON attributes
-                new DataContractResolverStrategy(),                                                     // DataContract attributes
-                new XmlResolverStrategy(),                                                              // XmlSerializer attributes
-                new ConventionResolverStrategy(ConventionResolverStrategy.WordCasing.PascalCase),       // DotNetStyle
-                new ConventionResolverStrategy(ConventionResolverStrategy.WordCasing.CamelCase),        // jsonStyle
-                new ConventionResolverStrategy(ConventionResolverStrategy.WordCasing.Lowercase, "-"),   // xml-style
-                new ConventionResolverStrategy(ConventionResolverStrategy.WordCasing.Uppercase, "_"));	// CONST_STYLE
-
+            CombinedResolverStrategy resolver = new CombinedResolverStrategy(new JsonResolverStrategy());
 
             JsonReader reader = new JsonReader(new DataReaderSettings(resolver));
 
