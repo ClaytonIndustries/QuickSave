@@ -41,7 +41,7 @@ namespace CI.QuickSave.Core
             {
                 CreateRootFolder();
 
-                if (Exists(Path.Combine(_basePath, filename + _extension)))
+                if (Exists(filename))
                 {
                     using (StreamReader reader = new StreamReader(Path.Combine(_basePath, filename + _extension)))
                     {
