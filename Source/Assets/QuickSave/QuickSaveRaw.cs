@@ -14,7 +14,7 @@ namespace CI.QuickSave
     public class QuickSaveRaw
     {
         /// <summary>
-        /// Save an object to a file
+        /// Saves an object to a file
         /// </summary>
         /// <typeparam name="T">The type of object to save</typeparam>
         /// <param name="root">The root this object will be saved under</param>
@@ -25,7 +25,7 @@ namespace CI.QuickSave
         }
 
         /// <summary>
-        /// Save an object to a file using the specified settings
+        /// Saves an object to a file using the specified settings
         /// </summary>
         /// <typeparam name="T">The type of object to save</typeparam>
         /// <param name="root">The root this object will be saved under</param>
@@ -48,7 +48,7 @@ namespace CI.QuickSave
         }
 
         /// <summary>
-        /// Load an object from a file
+        /// Loads an object from a file
         /// </summary>
         /// <typeparam name="T">The type of object to load</typeparam>
         /// <param name="root">The root this object was saved under</param>
@@ -59,7 +59,7 @@ namespace CI.QuickSave
         }
 
         /// <summary>
-        /// Load an object from a file using the specified settings
+        /// Loads an object from a file using the specified settings
         /// </summary>
         /// <typeparam name="T">The type of object to load</typeparam>
         /// <param name="root">The root this object was saved under</param>

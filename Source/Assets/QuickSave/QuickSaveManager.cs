@@ -14,7 +14,7 @@ namespace CI.QuickSave
     public static class QuickSaveManager
     {
         /// <summary>
-        /// Attempt to save an object to a file under the specified key
+        /// Attempts to save an object to a file under the specified key
         /// </summary>
         /// <typeparam name="T">The type of object to save</typeparam>
         /// <param name="root">The root this object will be saved under</param>
@@ -28,7 +28,7 @@ namespace CI.QuickSave
         }
 
         /// <summary>
-        /// Attempt to save an object to a file under the specified key using the specified settings
+        /// Attempts to save an object to a file under the specified key using the specified settings
         /// </summary>
         /// <typeparam name="T">The type of object to save</typeparam>
         /// <param name="root">The root this object will be saved under</param>
@@ -83,7 +83,7 @@ namespace CI.QuickSave
         }
 
         /// <summary>
-        /// Attempt to load an object from a file under the specified key
+        /// Attempts to load an object from a file under the specified key
         /// </summary>
         /// <typeparam name="T">The type of object to load</typeparam>
         /// <param name="root">The root this object was saved under</param>
@@ -96,7 +96,7 @@ namespace CI.QuickSave
         }
 
         /// <summary>
-        /// Attempt to load an object from a file under the specified key using the specified settings
+        /// Attempts to load an object from a file under the specified key using the specified settings
         /// </summary>
         /// <typeparam name="T">The type of object to load</typeparam>
         /// <param name="root">The root this object was saved under</param>
@@ -139,7 +139,7 @@ namespace CI.QuickSave
         }
 
         /// <summary>
-        /// Delete the specified root if it exists
+        /// Deletes the specified root if it exists
         /// </summary>
         /// <param name="root">The root to delete</param>
         public static void Delete(string root)
@@ -148,7 +148,7 @@ namespace CI.QuickSave
         }
 
         /// <summary>
-        /// Does the specified root exist
+        /// Determines if the specified root exist
         /// </summary>
         /// <param name="root">The root to check</param>
         /// <returns>Does the root exist</returns>
@@ -158,7 +158,7 @@ namespace CI.QuickSave
         }
 
         /// <summary>
-        /// Get the names of all roots
+        /// Gets the names of all roots
         /// </summary>
         /// <returns>A collection of root names</returns>
         public static IEnumerable<string> GetAllRoots()
