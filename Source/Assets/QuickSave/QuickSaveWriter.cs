@@ -50,13 +50,14 @@ namespace CI.QuickSave
         }
 
         /// <summary>
-        /// Write an object to the specified key
+        /// Writes an object to the specified key
         /// </summary>
         /// <typeparam name="T">The type of object to write</typeparam>
         /// <param name="key">The key this object will be saved under</param>
         /// <param name="value">The object to save</param>
         /// <param name="replace">If the key already exists should it be overwitten</param>
-        public void Write<T>(string key, T value, bool replace)
+        /// <returns>The QuickSaveWriter</returns>
+        public QuickSaveWriter Write<T>(string key, T value, bool replace)
         {
             if (_items.ContainsKey(key))
             {
@@ -71,6 +72,8 @@ namespace CI.QuickSave
             }
 
             _items.Add(key, value);
+
+            return this;
         }
 
         /// <summary>
@@ -101,7 +104,7 @@ namespace CI.QuickSave
         }
 
         /// <summary>
-        /// Delete the specified key if it exists
+        /// Deletes the specified key if it exists
         /// </summary>
         /// <param name="key">The key to delete</param>
         public void Delete(string key)
@@ -123,7 +126,7 @@ namespace CI.QuickSave
         }
 
         /// <summary>
-        /// Get the names of all the keys
+        /// Gets the names of all the keys
         /// </summary>
         /// <returns>A collection of key names</returns>
         public IEnumerable<string> GetAllKeys()
@@ -132,7 +135,7 @@ namespace CI.QuickSave
         }
 
         /// <summary>
-        /// Write the changes to file
+        /// Commits the changes to file
         /// </summary>
         public void Commit()
         {
@@ -151,9 +154,9 @@ namespace CI.QuickSave
         }
 
         /// <summary>
-        /// Attempt to write the changes to file
+        /// Attempts to commit the changes to file
         /// </summary>
-        /// <returns>Was the write successful</returns>
+        /// <returns>Was the commit successful</returns>
         public bool TryCommit()
         {
             try
