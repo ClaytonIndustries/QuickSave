@@ -20,6 +20,29 @@ namespace CI.QuickSave.Core.Models
         public float m10;
         public float m31;
 
+        public UnityEngine.Matrix4x4 ToUnityType()
+        {
+            return new UnityEngine.Matrix4x4()
+            {
+                m00 = m00,
+                m33 = m33,
+                m23 = m23,
+                m13 = m13,
+                m03 = m03,
+                m32 = m32,
+                m22 = m22,
+                m02 = m02,
+                m12 = m12,
+                m21 = m21,
+                m11 = m11,
+                m01 = m01,
+                m30 = m30,
+                m20 = m20,
+                m10 = m10,
+                m31 = m31,
+            };
+        }
+
         public static Matrix4x4 FromUnityType(UnityEngine.Matrix4x4 matrix4X4)
         {
             return new Matrix4x4()

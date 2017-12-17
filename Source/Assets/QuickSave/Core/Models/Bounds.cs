@@ -9,6 +9,18 @@ namespace CI.QuickSave.Core.Models
         public Vector3 min;
         public Vector3 max;
 
+        public UnityEngine.Bounds ToUnityType()
+        {
+            return new UnityEngine.Bounds()
+            {
+                extents = extents.ToUnityType(),
+                size = size.ToUnityType(),
+                center = center.ToUnityType(),
+                min = min.ToUnityType(),
+                max = max.ToUnityType()
+            };
+        }
+
         public static Bounds FromUnityType(UnityEngine.Bounds bounds)
         {
             return new Bounds()

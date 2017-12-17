@@ -23,7 +23,14 @@ namespace CI.QuickSave.Core
 
         public static T Deserialise<T>(string json)
         {
-            return _serialiser.Deserialise<T>(json);
+            if (TypeHelper.IsUnityType<T>())
+            {
+                return TypeHelper.DeserialiseUnityType<T>(json, _serialiser);
+            }
+            else
+            {
+                return _serialiser.Deserialise<T>(json);
+            }
         }
     }
 }

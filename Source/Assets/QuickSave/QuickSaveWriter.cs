@@ -71,7 +71,7 @@ namespace CI.QuickSave
                 }
             }
 
-            _items.Add(key, value);
+            _items.Add(key, TypeHelper.ReplaceIfUnityType(value));
 
             return this;
         }
@@ -98,7 +98,7 @@ namespace CI.QuickSave
                 }
             }
 
-            _items.Add(key, value);
+            _items.Add(key, TypeHelper.ReplaceIfUnityType(value));
 
             return true;
         }

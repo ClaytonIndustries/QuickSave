@@ -8,6 +8,11 @@ namespace CI.QuickSave.Core.Models
         public float z;
         public float w;
 
+        public UnityEngine.Quaternion ToUnityType()
+        {
+            return new UnityEngine.Quaternion(x, y, z, w);
+        }
+
         public static Quaternion FromUnityType(UnityEngine.Quaternion quaternion)
         {
             return new Quaternion()

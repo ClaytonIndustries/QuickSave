@@ -17,6 +17,26 @@ namespace CI.QuickSave.Core.Models
         public Vector2 position;
         public Vector2 size;
 
+        public UnityEngine.Rect ToUnityType()
+        {
+            return new UnityEngine.Rect()
+            {
+                yMax = yMax,
+                xMax = xMax,
+                yMin = yMin,
+                xMin = xMin,
+                x = x,
+                y = y,
+                height = height,
+                width = width,
+                max = max.ToUnityType(),
+                min = min.ToUnityType(),
+                center = center.ToUnityType(),
+                position = position.ToUnityType(),
+                size = size.ToUnityType()
+            };
+        }
+
         public static Rect FromUnityType(UnityEngine.Rect rect)
         {
             return new Rect()

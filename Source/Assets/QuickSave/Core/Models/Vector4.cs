@@ -8,6 +8,11 @@ namespace CI.QuickSave.Core.Models
         public float z;
         public float w;
 
+        public UnityEngine.Vector4 ToUnityType()
+        {
+            return new UnityEngine.Vector4(x, y, z, w);
+        }
+
         public static Vector4 FromUnityType(UnityEngine.Vector4 vector4)
         {
             return new Vector4()

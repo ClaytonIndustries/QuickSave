@@ -8,6 +8,11 @@ namespace CI.QuickSave.Core.Models
         public float b;
         public float a;
 
+        public UnityEngine.Color ToUnityType()
+        {
+            return new UnityEngine.Color(r, g, b, a);
+        }
+
         public static Color FromUnityType(UnityEngine.Color color)
         {
             return new Color()

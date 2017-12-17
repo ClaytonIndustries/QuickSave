@@ -35,7 +35,7 @@ namespace CI.QuickSave
         {
             try
             {
-                string jsonToSave = JsonSerialiser.Serialise(value);
+                string jsonToSave = JsonSerialiser.Serialise(TypeHelper.ReplaceIfUnityType(value));
 
                 string encryptedJson = Cryptography.Encrypt(jsonToSave, settings.SecurityMode, settings.Password);
 

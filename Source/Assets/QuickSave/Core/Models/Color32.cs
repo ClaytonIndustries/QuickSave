@@ -8,6 +8,11 @@ namespace CI.QuickSave.Core.Models
         public byte b;
         public byte a;
 
+        public UnityEngine.Color32 ToUnityType()
+        {
+            return new UnityEngine.Color32(r, g, b, a);
+        }
+
         public static Color32 FromUnityType(UnityEngine.Color32 color32)
         {
             return new Color32()

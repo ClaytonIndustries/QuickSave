@@ -66,7 +66,7 @@ namespace CI.QuickSave
                     }
                 }
 
-                items.Add(key, value);
+                items.Add(key, TypeHelper.ReplaceIfUnityType(value));
 
                 string jsonToSave = JsonSerialiser.Serialise(items);
 
