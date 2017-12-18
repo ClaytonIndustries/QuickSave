@@ -20,11 +20,10 @@ namespace CI.QuickSave
         /// <param name="root">The root this object will be saved under</param>
         /// <param name="key">The key this object will be saved under</param>
         /// <param name="value">The object to save</param>
-        /// <param name="replace">If the key already exists should it be overwitten</param>
         /// <returns>Was the save successful</returns>
-        public static bool TrySave<T>(string root, string key, T value, bool replace)
+        public static bool TrySave<T>(string root, string key, T value)
         {
-            return TrySave(root, key, value, replace, new QuickSaveSettings());
+            return TrySave(root, key, value, new QuickSaveSettings());
         }
 
         /// <summary>
@@ -34,10 +33,9 @@ namespace CI.QuickSave
         /// <param name="root">The root this object will be saved under</param>
         /// <param name="key">The key this object will be saved under</param>
         /// <param name="value">The object to save</param>
-        /// <param name="replace">If the key already exists should it be overwitten</param>
         /// <param name="settings">Settings</param>
         /// <returns>Was the save successful</returns>
-        public static bool TrySave<T>(string root, string key, T value, bool replace, QuickSaveSettings settings)
+        public static bool TrySave<T>(string root, string key, T value, QuickSaveSettings settings)
         {
             try
             {
@@ -55,14 +53,7 @@ namespace CI.QuickSave
 
                     if (items.ContainsKey(key))
                     {
-                        if (replace)
-                        {
-                            items.Remove(key);
-                        }
-                        else
-                        {
-                            return false;
-                        }
+                        items.Remove(key);
                     }
                 }
 

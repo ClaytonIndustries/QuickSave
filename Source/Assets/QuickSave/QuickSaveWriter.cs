@@ -55,52 +55,17 @@ namespace CI.QuickSave
         /// <typeparam name="T">The type of object to write</typeparam>
         /// <param name="key">The key this object will be saved under</param>
         /// <param name="value">The object to save</param>
-        /// <param name="replace">If the key already exists should it be overwitten</param>
         /// <returns>The QuickSaveWriter</returns>
-        public QuickSaveWriter Write<T>(string key, T value, bool replace)
+        public QuickSaveWriter Write<T>(string key, T value)
         {
             if (_items.ContainsKey(key))
             {
-                if(replace)
-                {
-                    _items.Remove(key);
-                }
-                else
-                {
-                    throw new ArgumentException("Key already exists");
-                }
+                _items.Remove(key);
             }
 
             _items.Add(key, TypeHelper.ReplaceIfUnityType(value));
 
             return this;
-        }
-
-        /// <summary>
-        /// Attempts to write an object to the specified key
-        /// </summary>
-        /// <typeparam name="T">The type of object to write</typeparam>
-        /// <param name="key">The key this object will be saved under</param>
-        /// <param name="value">The object to save</param>
-        /// <param name="replace">If the key already exists should it be overwitten</param>
-        /// <returns>Was the write successful</returns>
-        public bool TryWrite<T>(string key, T value, bool replace)
-        {
-            if (_items.ContainsKey(key))
-            {
-                if (replace)
-                {
-                    _items.Remove(key);
-                }
-                else
-                {
-                    return false;
-                }
-            }
-
-            _items.Add(key, TypeHelper.ReplaceIfUnityType(value));
-
-            return true;
         }
 
         /// <summary>
