@@ -19,7 +19,7 @@ namespace CI.QuickSave.Core
         private static readonly string _basePath = Path.Combine(Application.persistentDataPath, "QuickSave");
         private static readonly string _extension = ".json";
 
-        public void Save(string filename, string value)
+        public bool Save(string filename, string value)
         {
             try
             {
@@ -29,10 +29,14 @@ namespace CI.QuickSave.Core
                 {
                     writer.Write(value);
                 }
+
+                return true;
             }
             catch
             {
             }
+
+            return false;
         }
 
         public string Load(string filename)

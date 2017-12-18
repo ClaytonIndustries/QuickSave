@@ -18,9 +18,9 @@ namespace CI.QuickSave.Core
         private static IFileAccess _storage = new FileAccessUWP();
 #endif
 
-        public static void Save(string filename, string value)
+        public static bool Save(string filename, string value)
         {
-            _storage.Save(filename, value);
+            return _storage.Save(filename, value);
         }
 
         public static string Load(string filename)

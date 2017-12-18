@@ -12,7 +12,7 @@ namespace CI.QuickSave.Core
 {
     public interface IFileAccess
     {
-        void Save(string filename, string value);
+        bool Save(string filename, string value);
         string Load(string filename);
         void Delete(string filename);
         bool Exists(string filename);

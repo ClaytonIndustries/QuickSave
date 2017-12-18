@@ -20,7 +20,7 @@ namespace CI.QuickSave.Core
 
         private static StorageFolder _baseFolder;
 
-        public void Save(string filename, string value)
+        public bool Save(string filename, string value)
         {
             try
             {
@@ -29,10 +29,14 @@ namespace CI.QuickSave.Core
                 StorageFile file = _baseFolder.CreateFileAsync(filename + _extension, CreationCollisionOption.ReplaceExisting).AsTask().Result;
 
                 FileIO.WriteTextAsync(file, value).AsTask().Wait();
+
+                return true;
             }
             catch
             {
             }
+
+            return false;
         }
 
         public string Load(string filename)
