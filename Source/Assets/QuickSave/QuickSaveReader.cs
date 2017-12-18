@@ -59,7 +59,7 @@ namespace CI.QuickSave
         {
             if (!_items.ContainsKey(key))
             {
-                throw new ArgumentException("Key does not exists");
+                throw new QuickSaveException("Key does not exists");
             }
 
             try
@@ -70,7 +70,7 @@ namespace CI.QuickSave
             }
             catch
             {
-                throw new InvalidOperationException("Unable to deserialise data");
+                throw new QuickSaveException("Unable to deserialise json");
             }
         }
 
@@ -85,7 +85,7 @@ namespace CI.QuickSave
         {
             if (!_items.ContainsKey(key))
             {
-                throw new ArgumentException("Key does not exists");
+                throw new QuickSaveException("Key does not exists");
             }
 
             try
@@ -96,7 +96,7 @@ namespace CI.QuickSave
             }
             catch
             {
-                throw new InvalidOperationException("Unable to deserialise data");
+                throw new QuickSaveException("Unable to deserialise json");
             }
 
             return this;
@@ -157,26 +157,28 @@ namespace CI.QuickSave
 
             if (string.IsNullOrEmpty(fileJson))
             {
-                throw new ArgumentException("Root does not exist");
+                throw new QuickSaveException("Root does not exist");
+            }
+
+            string decryptedJson;
+
+            try
+            {
+                decryptedJson = Cryptography.Decrypt(fileJson, _settings.SecurityMode, _settings.Password);
+            }
+            catch (Exception e)
+            {
+                throw new QuickSaveException("Decryption failed", e);
             }
 
             try
             {
-                string decryptedJson = Cryptography.Decrypt(fileJson, _settings.SecurityMode, _settings.Password);
-
                 _items = JsonSerialiser.Deserialise<Dictionary<string, object>>(decryptedJson);
-
-                if(_items != null)
-                {
-                    return;
-                }
             }
             catch (Exception e)
             {
-                throw new InvalidOperationException("Unable to load data", e);
+                throw new QuickSaveException("Failed to deserialise json", e);
             }
-
-            throw new InvalidOperationException("Unable to load data");
         }
     }
 }

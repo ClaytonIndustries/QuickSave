@@ -104,17 +104,31 @@ namespace CI.QuickSave
         /// </summary>
         public void Commit()
         {
+            string jsonToSave;
+
             try
             {
-                string jsonToSave = JsonSerialiser.Serialise(_items);
-
-                string encryptedJson = Cryptography.Encrypt(jsonToSave, _settings.SecurityMode, _settings.Password);
-
-                FileAccess.Save(_root, encryptedJson);
+                jsonToSave = JsonSerialiser.Serialise(_items);
             }
             catch (Exception e)
             {
-                throw new InvalidOperationException("Unable to save data", e);
+                throw new QuickSaveException("Json serialisation failed", e);
+            }
+
+            string encryptedJson;
+
+            try
+            {
+                encryptedJson = Cryptography.Encrypt(jsonToSave, _settings.SecurityMode, _settings.Password);
+            }
+            catch (Exception e)
+            {
+                throw new QuickSaveException("Encryption failed", e);
+            }
+
+            if(!FileAccess.Save(_root, encryptedJson))
+            {
+                throw new QuickSaveException("Failed to write to file");
             }
         }
 
@@ -151,15 +165,24 @@ namespace CI.QuickSave
                 return;
             }
 
+            string decryptedJson;
+
             try
             {
-                string decryptedJson = Cryptography.Decrypt(fileJson, _settings.SecurityMode, _settings.Password);
+                decryptedJson = Cryptography.Decrypt(fileJson, _settings.SecurityMode, _settings.Password);
+            }
+            catch (Exception e)
+            {
+                throw new QuickSaveException("Decryption failed", e);
+            }
 
+            try
+            {
                 _items = JsonSerialiser.Deserialise<Dictionary<string, object>>(decryptedJson) ?? new Dictionary<string, object>();
             }
             catch (Exception e)
             {
-                throw new InvalidOperationException("Unable to load data", e);
+                throw new QuickSaveException("Failed to deserialise json", e);
             }
         }
     }

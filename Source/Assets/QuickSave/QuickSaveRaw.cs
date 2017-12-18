@@ -33,17 +33,31 @@ namespace CI.QuickSave
         /// <param name="settings">Settings</param>
         public static void Save<T>(string root, T value, QuickSaveSettings settings)
         {
+            string jsonToSave;
+
             try
             {
-                string jsonToSave = JsonSerialiser.Serialise(TypeHelper.ReplaceIfUnityType(value));
-
-                string encryptedJson = Cryptography.Encrypt(jsonToSave, settings.SecurityMode, settings.Password);
-
-                FileAccess.Save(root, encryptedJson);
+                jsonToSave = JsonSerialiser.Serialise(TypeHelper.ReplaceIfUnityType(value));
             }
             catch (Exception e)
             {
-                throw new InvalidOperationException("Unable to save data", e);
+                throw new QuickSaveException("Json serialisation failed", e);
+            }
+
+            string encryptedJson;
+
+            try
+            {
+                encryptedJson = Cryptography.Encrypt(jsonToSave, settings.SecurityMode, settings.Password);
+            }
+            catch (Exception e)
+            {
+                throw new QuickSaveException("Encryption failed", e);
+            }
+
+            if(!FileAccess.Save(root, encryptedJson))
+            {
+                throw new QuickSaveException("Failed to write to file");
             }
         }
 
@@ -67,17 +81,31 @@ namespace CI.QuickSave
         /// <returns>The object that was loaded</returns>
         public static T Load<T>(string root, QuickSaveSettings settings)
         {
+            string fileJson = FileAccess.Load(root);
+
+            if(string.IsNullOrEmpty(fileJson))
+            {
+                throw new QuickSaveException("File either does not exist or is empty");
+            }
+
+            string decryptedJson;
+
             try
             {
-                string fileJson = FileAccess.Load(root);
+                decryptedJson = Cryptography.Decrypt(fileJson, settings.SecurityMode, settings.Password);
+            }
+            catch (Exception e)
+            {
+                throw new QuickSaveException("Decryption failed", e);
+            }
 
-                string decryptedJson = Cryptography.Decrypt(fileJson, settings.SecurityMode, settings.Password);
-
+            try
+            {
                 return JsonSerialiser.Deserialise<T>(decryptedJson);
             }
             catch (Exception e)
             {
-                throw new InvalidOperationException("Unable to load data", e);
+                throw new QuickSaveException("Failed to deserialise json", e);
             }
         }
     }
