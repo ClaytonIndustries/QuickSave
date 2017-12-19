@@ -126,7 +126,7 @@ namespace CI.QuickSave
                 throw new QuickSaveException("Encryption failed", e);
             }
 
-            if(!FileAccess.Save(_root, encryptedJson))
+            if(!FileAccess.SaveString(_root, false, encryptedJson))
             {
                 throw new QuickSaveException("Failed to write to file");
             }
@@ -144,7 +144,7 @@ namespace CI.QuickSave
 
                 string encryptedJson = Cryptography.Encrypt(jsonToSave, _settings.SecurityMode, _settings.Password);
 
-                FileAccess.Save(_root, encryptedJson);
+                FileAccess.SaveString(_root, false, encryptedJson);
 
                 return true;
             }
@@ -156,7 +156,7 @@ namespace CI.QuickSave
 
         private void Open()
         {
-            string fileJson = FileAccess.Load(_root);
+            string fileJson = FileAccess.LoadString(_root, false);
 
             if(string.IsNullOrEmpty(fileJson))
             {

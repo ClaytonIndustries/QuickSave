@@ -153,7 +153,7 @@ namespace CI.QuickSave
 
         private void Open()
         {
-            string fileJson = FileAccess.Load(_root);
+            string fileJson = FileAccess.LoadString(_root, false);
 
             if (string.IsNullOrEmpty(fileJson))
             {

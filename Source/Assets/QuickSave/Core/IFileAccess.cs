@@ -12,10 +12,12 @@ namespace CI.QuickSave.Core
 {
     public interface IFileAccess
     {
-        bool Save(string filename, string value);
-        string Load(string filename);
+        bool SaveString(string filename, string value);
+        bool SaveBytes(string filename, byte[] value);
+        string LoadString(string filename);
+        byte[] LoadBytes(string filename);
         void Delete(string filename);
         bool Exists(string filename);
-        IEnumerable<string> Files();
+        IEnumerable<string> Files(bool includeExtensions);
     }
 }

@@ -12,35 +12,52 @@ namespace CI.QuickSave.Core
 {
     public static class FileAccess
     {
+        private static readonly string _defaultExtension = ".json";
+
 #if !NETFX_CORE
         private static IFileAccess _storage = new FileAccessMono();
 #else
         private static IFileAccess _storage = new FileAccessUWP();
 #endif
 
-        public static bool Save(string filename, string value)
+        public static bool SaveString(string filename, bool includesExtension, string value)
         {
-            return _storage.Save(filename, value);
+            return _storage.SaveString(GetFilenameWithExtension(filename, includesExtension), value);
         }
 
-        public static string Load(string filename)
+        public static bool SaveBytes(string filename, bool includesExtension, byte[] value)
         {
-            return _storage.Load(filename);
+            return _storage.SaveBytes(GetFilenameWithExtension(filename, includesExtension), value);
         }
 
-        public static void Delete(string filename)
+        public static string LoadString(string filename, bool includesExtension)
         {
-            _storage.Delete(filename);
+            return _storage.LoadString(GetFilenameWithExtension(filename, includesExtension));
         }
 
-        public static bool Exists(string filename)
+        public static byte[] LoadBytes(string filename, bool includesExtension)
         {
-            return _storage.Exists(filename);
+            return _storage.LoadBytes(GetFilenameWithExtension(filename, includesExtension));
         }
 
-        public static IEnumerable<string> Files()
+        public static void Delete(string filename, bool includesExtension)
         {
-            return _storage.Files();
+            _storage.Delete(GetFilenameWithExtension(filename, includesExtension));
+        }
+
+        public static bool Exists(string filename, bool includesExtension)
+        {
+            return _storage.Exists(GetFilenameWithExtension(filename, includesExtension));
+        }
+
+        private static string GetFilenameWithExtension(string filename, bool includesExtension)
+        {
+            return includesExtension ? filename : filename + _defaultExtension;
+        }
+
+        public static IEnumerable<string> Files(bool includeExtensions)
+        {
+            return _storage.Files(includeExtensions);
         }
     }
 }

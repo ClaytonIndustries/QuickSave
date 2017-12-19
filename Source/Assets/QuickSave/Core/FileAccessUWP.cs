@@ -16,17 +16,15 @@ namespace CI.QuickSave.Core
 {
     public class FileAccessUWP : IFileAccess
     {
-        private static readonly string _extension = ".json";
-
         private static StorageFolder _baseFolder;
 
-        public bool Save(string filename, string value)
+        public bool SaveString(string filename, string value)
         {
             try
             {
                 CreateRootFolder();
 
-                StorageFile file = _baseFolder.CreateFileAsync(filename + _extension, CreationCollisionOption.ReplaceExisting).AsTask().Result;
+                StorageFile file = _baseFolder.CreateFileAsync(filename, CreationCollisionOption.ReplaceExisting).AsTask().Result;
 
                 FileIO.WriteTextAsync(file, value).AsTask().Wait();
 
@@ -39,13 +37,18 @@ namespace CI.QuickSave.Core
             return false;
         }
 
-        public string Load(string filename)
+        public bool SaveString(string filename, string value)
+        {
+            return false;
+        }
+
+        public string LoadString(string filename)
         {
             try
             {
                 CreateRootFolder();
 
-                StorageFile file = _baseFolder.GetFileAsync(filename + _extension).AsTask().Result;
+                StorageFile file = _baseFolder.GetFileAsync(filename).AsTask().Result;
 
                 return FileIO.ReadTextAsync(file).AsTask().Result;
             }
@@ -56,13 +59,18 @@ namespace CI.QuickSave.Core
             return null;
         }
 
+        public string LoadBytes(string filename)
+        {
+            return null;
+        }
+
         public void Delete(string filename)
         {
             try
             {
                 CreateRootFolder();
 
-                StorageFile file = _baseFolder.GetFileAsync(filename + _extension).AsTask().Result;
+                StorageFile file = _baseFolder.GetFileAsync(filename).AsTask().Result;
 
                 file.DeleteAsync().AsTask().Wait();
             }
@@ -77,7 +85,7 @@ namespace CI.QuickSave.Core
             {
                 CreateRootFolder();
 
-                _baseFolder.GetFileAsync(filename + _extension).AsTask().Wait();
+                _baseFolder.GetFileAsync(filename).AsTask().Wait();
 
                 return true;
             }
@@ -88,7 +96,7 @@ namespace CI.QuickSave.Core
             return false;
         }
 
-        public IEnumerable<string> Files()
+        public IEnumerable<string> Files(bool includeExtensions)
         {
             try
             {

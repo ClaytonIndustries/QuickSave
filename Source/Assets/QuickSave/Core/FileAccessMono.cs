@@ -17,15 +17,14 @@ namespace CI.QuickSave.Core
     public class FileAccessMono : IFileAccess
     {
         private static readonly string _basePath = Path.Combine(Application.persistentDataPath, "QuickSave");
-        private static readonly string _extension = ".json";
 
-        public bool Save(string filename, string value)
+        public bool SaveString(string filename, string value)
         {
             try
             {
                 CreateRootFolder();
 
-                using (StreamWriter writer = new StreamWriter(Path.Combine(_basePath, filename + _extension)))
+                using (StreamWriter writer = new StreamWriter(Path.Combine(_basePath, filename)))
                 {
                     writer.Write(value);
                 }
@@ -39,7 +38,27 @@ namespace CI.QuickSave.Core
             return false;
         }
 
-        public string Load(string filename)
+        public bool SaveBytes(string filename, byte[] value)
+        {
+            try
+            {
+                CreateRootFolder();
+
+                using (FileStream fileStream = new FileStream(Path.Combine(_basePath, filename), FileMode.Create))
+                {
+                    fileStream.Write(value, 0, value.Length);
+                }
+
+                return true;
+            }
+            catch
+            {
+            }
+
+            return false;
+        }
+
+        public string LoadString(string filename)
         {
             try
             {
@@ -47,9 +66,34 @@ namespace CI.QuickSave.Core
 
                 if (Exists(filename))
                 {
-                    using (StreamReader reader = new StreamReader(Path.Combine(_basePath, filename + _extension)))
+                    using (StreamReader reader = new StreamReader(Path.Combine(_basePath, filename)))
                     {
                         return reader.ReadToEnd();
+                    }
+                }
+            }
+            catch
+            {
+            }
+
+            return null;
+        }
+
+        public byte[] LoadBytes(string filename)
+        {
+            try
+            {
+                CreateRootFolder();
+
+                if (Exists(filename))
+                {
+                    using (FileStream fileStream = new FileStream(Path.Combine(_basePath, filename), FileMode.Open))
+                    {
+                        byte[] buffer = new byte[fileStream.Length];
+
+                        fileStream.Read(buffer, 0, buffer.Length);
+
+                        return buffer;
                     }
                 }
             }
@@ -66,7 +110,7 @@ namespace CI.QuickSave.Core
             {
                 CreateRootFolder();
 
-                string fileLocation = Path.Combine(_basePath, filename + _extension);
+                string fileLocation = Path.Combine(_basePath, filename);
 
                 File.Delete(fileLocation);
             }
@@ -77,20 +121,25 @@ namespace CI.QuickSave.Core
 
         public bool Exists(string filename)
         {
-            string fileLocation = Path.Combine(_basePath, filename + _extension);
+            string fileLocation = Path.Combine(_basePath, filename);
 
             return File.Exists(fileLocation);
         }
 
-        public IEnumerable<string> Files()
+        public IEnumerable<string> Files(bool includeExtensions)
         {
             try
             {
                 CreateRootFolder();
 
-                return Directory.GetFiles(_basePath).Select(x => Path.GetFileNameWithoutExtension(x));
-
-                //return new DirectoryInfo(_basePath).GetFiles().Select(x => Path.GetFileNameWithoutExtension(x.Name));
+                if(includeExtensions)
+                {
+                    return Directory.GetFiles(_basePath, "*.json").Select(x => Path.GetFileName(x));
+                }
+                else
+                {
+                    return Directory.GetFiles(_basePath, "*.json").Select(x => Path.GetFileNameWithoutExtension(x));
+                }
             }
             catch
             {
