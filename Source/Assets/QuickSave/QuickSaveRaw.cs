@@ -6,7 +6,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-using System;
+using System.Collections.Generic;
 using CI.QuickSave.Core;
 
 namespace CI.QuickSave
@@ -14,99 +14,91 @@ namespace CI.QuickSave
     public class QuickSaveRaw
     {
         /// <summary>
-        /// Saves an object to a file
+        /// Saves a string directly to the specified file, overwriting if it already exists
         /// </summary>
-        /// <typeparam name="T">The type of object to save</typeparam>
-        /// <param name="root">The root this object will be saved under</param>
-        /// <param name="value">The object to save</param>
-        public static void Save<T>(string root, T value)
+        /// <param name="filename">The file to save to</param>
+        /// <param name="content">The string to save</param>
+        public static void SaveString(string filename, string content)
         {
-            Save(root, value, new QuickSaveSettings());
-        }
-
-        /// <summary>
-        /// Saves an object to a file using the specified settings
-        /// </summary>
-        /// <typeparam name="T">The type of object to save</typeparam>
-        /// <param name="root">The root this object will be saved under</param>
-        /// <param name="value">The object to save</param>
-        /// <param name="settings">Settings</param>
-        public static void Save<T>(string root, T value, QuickSaveSettings settings)
-        {
-            string jsonToSave;
-
-            try
-            {
-                jsonToSave = JsonSerialiser.Serialise(TypeHelper.ReplaceIfUnityType(value));
-            }
-            catch (Exception e)
-            {
-                throw new QuickSaveException("Json serialisation failed", e);
-            }
-
-            string encryptedJson;
-
-            try
-            {
-                encryptedJson = Cryptography.Encrypt(jsonToSave, settings.SecurityMode, settings.Password);
-            }
-            catch (Exception e)
-            {
-                throw new QuickSaveException("Encryption failed", e);
-            }
-
-            if(!FileAccess.Save(root, encryptedJson))
+            if (!FileAccess.SaveString(filename, true, content))
             {
                 throw new QuickSaveException("Failed to write to file");
             }
         }
 
         /// <summary>
-        /// Loads an object from a file
+        /// Saves a byte array directly to the specified file, overwriting if it already exists
         /// </summary>
-        /// <typeparam name="T">The type of object to load</typeparam>
-        /// <param name="root">The root this object was saved under</param>
-        /// <returns>The object that was loaded</returns>
-        public static T Load<T>(string root)
+        /// <param name="filename">The file to save to</param>
+        /// <param name="content">The byte array to save</param>
+        public static void SaveBtyes(string filename, byte[] content)
         {
-            return Load<T>(root, new QuickSaveSettings());
+            if (FileAccess.SaveBytes(filename, true, content))
+            {
+                throw new QuickSaveException("Failed to write to file");
+            }
         }
 
         /// <summary>
-        /// Loads an object from a file using the specified settings
+        /// Loads the contents of the specified file into a string
         /// </summary>
-        /// <typeparam name="T">The type of object to load</typeparam>
-        /// <param name="root">The root this object was saved under</param>
-        /// <param name="settings">Settings</param>
-        /// <returns>The object that was loaded</returns>
-        public static T Load<T>(string root, QuickSaveSettings settings)
+        /// <param name="filename">The file to load from</param>
+        /// <returns>The contents of the file as a string</returns>
+        public static string LoadString(string filename)
         {
-            string fileJson = FileAccess.Load(root);
+            string content = FileAccess.LoadString(filename, true);
 
-            if(string.IsNullOrEmpty(fileJson))
+            if(content == null)
             {
-                throw new QuickSaveException("File either does not exist or is empty");
-            }
-
-            string decryptedJson;
-
-            try
-            {
-                decryptedJson = Cryptography.Decrypt(fileJson, settings.SecurityMode, settings.Password);
-            }
-            catch (Exception e)
-            {
-                throw new QuickSaveException("Decryption failed", e);
+                throw new QuickSaveException("Failed to load file");
             }
 
-            try
+            return content;
+        }
+
+        /// <summary>
+        /// Loads the contents of the specified file into a byte array
+        /// </summary>
+        /// <param name="filename">The file to load from</param>
+        /// <returns>The contents of the file as a byte array</returns>
+        public static byte[] LoadBytes(string filename)
+        {
+            byte[] content = FileAccess.LoadBytes(filename, true);
+
+            if (content == null)
             {
-                return JsonSerialiser.Deserialise<T>(decryptedJson);
+                throw new QuickSaveException("Failed to load file");
             }
-            catch (Exception e)
-            {
-                throw new QuickSaveException("Failed to deserialise json", e);
-            }
+
+            return content;
+        }
+
+        /// <summary>
+        /// Deletes the specified file if it exists
+        /// </summary>
+        /// <param name="filename">The file to delete</param>
+        public static void Delete(string filename)
+        {
+            FileAccess.Delete(filename, true);
+        }
+
+        /// <summary>
+        /// Determines if the specified file exists
+        /// </summary>
+        /// <param name="filename">The file to check</param>
+        /// <returns>Does the file exist</returns>
+        public static bool Exists(string filename)
+        {
+            return FileAccess.Exists(filename, true);
+        }
+
+        /// <summary>
+        /// Gets the names of all files
+        /// </summary>
+        /// <returns>A collection of file names</returns>
+        public static IEnumerable<string> GetAllFiles()
+        {
+            return FileAccess.Files(false);
         }
     }
 }
