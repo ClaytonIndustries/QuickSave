@@ -49,7 +49,9 @@ namespace CI.QuickSave
                 }
                 else
                 {
-                    items = JsonSerialiser.Deserialise<Dictionary<string, object>>(fileJson) ?? new Dictionary<string, object>();
+					string decryptedJson = Cryptography.Decrypt(fileJson, settings.SecurityMode, settings.Password);
+					
+                    items = JsonSerialiser.Deserialise<Dictionary<string, object>>(decryptedJson) ?? new Dictionary<string, object>();
 
                     if (items.ContainsKey(key))
                     {
@@ -137,6 +139,53 @@ namespace CI.QuickSave
         {
             FileAccess.Delete(root);
         }
+		
+		/// <summary>
+        /// Deletes the specified key from the specified root if it exists
+        /// </summary>
+        /// <param name="root">The root the key was saved under</param>
+		/// <param name="key">The key to delete</param>
+		public static void Delete(string root, string key)
+		{
+			Delete(root, key, new QuickSaveSettings());
+		}
+		
+		/// <summary>
+        /// Deletes the specified key from the specified root using the specified settings if it exists
+        /// </summary>
+        /// <param name="root">The root the key was saved under</param>
+		/// <param name="key">The key to delete</param>
+		/// <param name="settings">Settings</param>
+		public static void Delete(string root, string key, QuickSaveSettings settings)
+		{
+			try
+            {
+                string fileJson = FileAccess.Load(root);
+				
+				if (string.IsNullOrEmpty(fileJson))
+                {
+                    return;
+                }
+				
+				string decryptedJson = Cryptography.Decrypt(fileJson, settings.SecurityMode, settings.Password);
+				
+				Dictionary<string, object> items = JsonSerialiser.Deserialise<Dictionary<string, object>>(decryptedJson) ?? new Dictionary<string, object>();
+
+				if (items.ContainsKey(key))
+				{
+					items.Remove(key);
+				}
+
+                string jsonToSave = JsonSerialiser.Serialise(items);
+
+                string encryptedJson = Cryptography.Encrypt(jsonToSave, settings.SecurityMode, settings.Password);
+
+                FileAccess.Save(root, encryptedJson);
+            }
+            catch
+            {
+            } 
+		}
 
         /// <summary>
         /// Determines if the specified root exist
