@@ -50,7 +50,7 @@ namespace CI.QuickSave
         }
 
         /// <summary>
-        /// Attempts to load an object from a file under the specified key
+        /// Attempts to load an object from a root under the specified key
         /// </summary>
         /// <typeparam name="T">The type of object to load</typeparam>
         /// <param name="root">The root this object was saved under</param>
@@ -63,7 +63,7 @@ namespace CI.QuickSave
         }
 
         /// <summary>
-        /// Attempts to load an object from a file under the specified key using the specified settings
+        /// Attempts to load an object from a root under the specified key using the specified settings
         /// </summary>
         /// <typeparam name="T">The type of object to load</typeparam>
         /// <param name="root">The root this object was saved under</param>

@@ -37,7 +37,7 @@ namespace CI.QuickSave
         }
 
         /// <summary>
-        /// Attempts to save an object to a file under the specified key
+        /// Attempts to save an object to a root under the specified key
         /// </summary>
         /// <typeparam name="T">The type of object to save</typeparam>
         /// <param name="root">The root this object will be saved under</param>
@@ -50,7 +50,7 @@ namespace CI.QuickSave
         }
 
         /// <summary>
-        /// Attempts to save an object to a file under the specified key using the specified settings
+        /// Attempts to save an object to a root under the specified key using the specified settings
         /// </summary>
         /// <typeparam name="T">The type of object to save</typeparam>
         /// <param name="root">The root this object will be saved under</param>

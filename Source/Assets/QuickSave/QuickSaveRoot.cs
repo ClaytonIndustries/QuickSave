@@ -15,7 +15,7 @@ namespace CI.QuickSave
     public static class QuickSaveRoot
     {
         /// <summary>
-        /// Saves an object to a file, overwriting if it exists
+        /// Saves an object to a root, overwriting if it exists
         /// </summary>
         /// <typeparam name="T">The type of object to save</typeparam>
         /// <param name="root">The root this object will be saved under</param>
@@ -26,7 +26,7 @@ namespace CI.QuickSave
         }
 
         /// <summary>
-        /// Saves an object to a file using the specified settings, overwriting if it exists
+        /// Saves an object to a root using the specified settings, overwriting if it exists
         /// </summary>
         /// <typeparam name="T">The type of object to save</typeparam>
         /// <param name="root">The root this object will be saved under</param>
@@ -63,7 +63,7 @@ namespace CI.QuickSave
         }
 
         /// <summary>
-        /// Loads the contents of the file into the specified object
+        /// Loads the contents of the root into the specified object
         /// </summary>
         /// <typeparam name="T">The type of object to load</typeparam>
         /// <param name="root">The root this object was saved under</param>
@@ -74,7 +74,7 @@ namespace CI.QuickSave
         }
 
         /// <summary>
-        /// Loads the contents of the file into the specified object using the specified settings
+        /// Loads the contents of the root into the specified object using the specified settings
         /// </summary>
         /// <typeparam name="T">The type of object to load</typeparam>
         /// <param name="root">The root this object was saved under</param>
