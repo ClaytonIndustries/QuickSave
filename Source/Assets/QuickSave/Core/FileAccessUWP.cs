@@ -10,6 +10,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Storage;
 
 namespace CI.QuickSave.Core
@@ -37,8 +38,22 @@ namespace CI.QuickSave.Core
             return false;
         }
 
-        public bool SaveString(string filename, string value)
+        public bool SaveBytes(string filename, byte[] value)
         {
+            try
+            {
+                CreateRootFolder();
+
+                StorageFile file = _baseFolder.CreateFileAsync(filename, CreationCollisionOption.ReplaceExisting).AsTask().Result;
+
+                FileIO.WriteBytesAsync(file, value).AsTask().Wait();
+
+                return true;
+            }
+            catch
+            {
+            }
+
             return false;
         }
 
@@ -59,8 +74,20 @@ namespace CI.QuickSave.Core
             return null;
         }
 
-        public string LoadBytes(string filename)
+        public byte[] LoadBytes(string filename)
         {
+            try
+            {
+                CreateRootFolder();
+
+                StorageFile file = _baseFolder.GetFileAsync(filename).AsTask().Result;
+
+                return FileIO.ReadBufferAsync(file).AsTask().Result.ToArray();
+            }
+            catch
+            {
+            }
+
             return null;
         }
 
@@ -102,7 +129,14 @@ namespace CI.QuickSave.Core
             {
                 CreateRootFolder();
 
-                return _baseFolder.GetFilesAsync().AsTask().Result.Select(x => x.DisplayName).ToList();
+                if (includeExtensions)
+                {
+                    return _baseFolder.GetFilesAsync().AsTask().Result.Where(x => x.FileType == ".json").Select(x => x.Name).ToList();
+                }
+                else
+                {
+                    return _baseFolder.GetFilesAsync().AsTask().Result.Select(x => x.DisplayName).ToList();
+                }
             }
             catch
             {
