@@ -130,7 +130,7 @@ namespace CI.QuickSave
         }
 
         /// <summary>
-        /// Gets the names of all roots
+        /// Gets the names of all roots that have been saved
         /// </summary>
         /// <returns>A collection of root names</returns>
         public static IEnumerable<string> GetAllRoots()

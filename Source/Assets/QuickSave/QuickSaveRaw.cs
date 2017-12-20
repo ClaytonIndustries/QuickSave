@@ -31,7 +31,7 @@ namespace CI.QuickSave
         /// </summary>
         /// <param name="filename">The file to save to</param>
         /// <param name="content">The byte array to save</param>
-        public static void SaveBtyes(string filename, byte[] content)
+        public static void SaveBytes(string filename, byte[] content)
         {
             if (FileAccess.SaveBytes(filename, true, content))
             {
@@ -93,7 +93,7 @@ namespace CI.QuickSave
         }
 
         /// <summary>
-        /// Gets the names of all files
+        /// Gets the names of all files that have been saved
         /// </summary>
         /// <returns>A collection of file names</returns>
         public static IEnumerable<string> GetAllFiles()

@@ -112,7 +112,7 @@ namespace CI.QuickSave
         }
 
         /// <summary>
-        /// Writes an object to the specified key
+        /// Writes an object to the specified key - you must called commit to write the data to file
         /// </summary>
         /// <typeparam name="T">The type of object to write</typeparam>
         /// <param name="key">The key this object will be saved under</param>
