@@ -37,6 +37,68 @@ namespace CI.QuickSave
         }
 
         /// <summary>
+        /// Attempts to save an object to a file under the specified key
+        /// </summary>
+        /// <typeparam name="T">The type of object to save</typeparam>
+        /// <param name="root">The root this object will be saved under</param>
+        /// <param name="key">The key this object will be saved under</param>
+        /// <param name="value">The object to save</param>
+        /// <returns>Was the save successful</returns>
+        public static bool TrySave<T>(string root, string key, T value)
+        {
+            return TrySave(root, key, value, new QuickSaveSettings());
+        }
+
+        /// <summary>
+        /// Attempts to save an object to a file under the specified key using the specified settings
+        /// </summary>
+        /// <typeparam name="T">The type of object to save</typeparam>
+        /// <param name="root">The root this object will be saved under</param>
+        /// <param name="key">The key this object will be saved under</param>
+        /// <param name="value">The object to save</param>
+        /// <param name="settings">Settings</param>
+        /// <returns>Was the save successful</returns>
+        public static bool TrySave<T>(string root, string key, T value, QuickSaveSettings settings)
+        {
+            try
+            {
+                string fileJson = FileAccess.LoadString(root, false);
+
+                Dictionary<string, object> items = null;
+
+                if (string.IsNullOrEmpty(fileJson))
+                {
+                    items = new Dictionary<string, object>();
+                }
+                else
+                {
+                    string decryptedJson = Cryptography.Decrypt(fileJson, settings.SecurityMode, settings.Password);
+
+                    items = JsonSerialiser.Deserialise<Dictionary<string, object>>(decryptedJson) ?? new Dictionary<string, object>();
+
+                    if (items.ContainsKey(key))
+                    {
+                        items.Remove(key);
+                    }
+                }
+
+                items.Add(key, TypeHelper.ReplaceIfUnityType(value));
+
+                string jsonToSave = JsonSerialiser.Serialise(items);
+
+                string encryptedJson = Cryptography.Encrypt(jsonToSave, settings.SecurityMode, settings.Password);
+
+                FileAccess.SaveString(root, false, encryptedJson);
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
         /// Creates a QuickSaveWriter on the specified root using the specified settings
         /// </summary>
         /// <param name="root">The root to write to</param>
