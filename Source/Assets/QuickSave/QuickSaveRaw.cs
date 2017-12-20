@@ -6,6 +6,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
+using System;
 using System.Collections.Generic;
 using CI.QuickSave.Core;
 
@@ -20,7 +21,29 @@ namespace CI.QuickSave
         /// <param name="content">The string to save</param>
         public static void SaveString(string filename, string content)
         {
-            if (!FileAccess.SaveString(filename, true, content))
+            SaveString(filename, content, new QuickSaveSettings());
+        }
+
+        /// <summary>
+        /// Saves a string directly to the specified file using the specified settings, overwriting if it already exists
+        /// </summary>
+        /// <param name="filename">The file to save to</param>
+        /// <param name="content">The string to save</param>
+        /// <param name="settings">Settings</param>
+        public static void SaveString(string filename, string content, QuickSaveSettings settings)
+        {
+            string encryptedText;
+
+            try
+            {
+                encryptedText = Cryptography.Encrypt(content, settings.SecurityMode, settings.Password);
+            }
+            catch (Exception e)
+            {
+                throw new QuickSaveException("Encryption failed", e);
+            }
+
+            if (!FileAccess.SaveString(filename, true, encryptedText))
             {
                 throw new QuickSaveException("Failed to write to file");
             }
@@ -46,14 +69,36 @@ namespace CI.QuickSave
         /// <returns>The contents of the file as a string</returns>
         public static string LoadString(string filename)
         {
+            return LoadString(filename, new QuickSaveSettings());
+        }
+
+        /// <summary>
+        /// Loads the contents of the specified file into a string using the specified settings
+        /// </summary>
+        /// <param name="filename">The file to load from</param>
+        /// <param name="settings">Settings</param>
+        /// <returns>The contents of the file as a string</returns>
+        public static string LoadString(string filename, QuickSaveSettings settings)
+        {
             string content = FileAccess.LoadString(filename, true);
 
-            if(content == null)
+            if (content == null)
             {
                 throw new QuickSaveException("Failed to load file");
             }
 
-            return content;
+            string decryptedText;
+
+            try
+            {
+                decryptedText = Cryptography.Decrypt(content, settings.SecurityMode, settings.Password);
+            }
+            catch (Exception e)
+            {
+                throw new QuickSaveException("Decryption failed", e);
+            }
+
+            return decryptedText;
         }
 
         /// <summary>
