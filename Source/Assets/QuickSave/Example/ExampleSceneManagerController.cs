@@ -50,6 +50,8 @@ public class ExampleSceneManagerController : MonoBehaviour
 
     public void QuickSaveRootExample()
     {
+        // Use QuickSaveRoot to save / load individual objects to / from their own files
+
         Texture2D texture2D = new Texture2D(1, 1);
         texture2D.LoadImage(new byte[] { 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4 });
         texture2D.Apply();
@@ -61,6 +63,8 @@ public class ExampleSceneManagerController : MonoBehaviour
 
     public void QuickSaveRawExample()
     {
+        // Use QuickSaveRaw to directly save / load text or binary data to / from files
+
         QuickSaveRaw.SaveString("TextFile.txt", "Some text to save");
         QuickSaveRaw.SaveBytes("BytesFile.txt", new byte[] { 1, 2, 3, 4 });
 
@@ -70,6 +74,8 @@ public class ExampleSceneManagerController : MonoBehaviour
 
     public void QuickSaveReaderExample()
     {
+        // Use a QuickSaveReader to read content from a file saved with QuickSaveWriter
+
         // An exception will be thrown if the root doesn't exist
 
         string one;
@@ -94,6 +100,8 @@ public class ExampleSceneManagerController : MonoBehaviour
 
     public void QuickSaveWriterExample()
     {
+        // Use a QuickSaveWriter to save content to a file, multiple items can be saved to the save file by specifying different keys
+
         string one = "Hello World!";
         double two = 45.6789;
         Vector2 three = new Vector2(34.0f, 78.92f);
