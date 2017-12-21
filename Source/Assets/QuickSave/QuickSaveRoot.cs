@@ -8,7 +8,10 @@
 
 using System;
 using System.Collections.Generic;
-using CI.QuickSave.Core;
+using CI.QuickSave.Core.Helpers;
+using CI.QuickSave.Core.Security;
+using CI.QuickSave.Core.Serialisers;
+using CI.QuickSave.Core.Storage;
 
 namespace CI.QuickSave
 {

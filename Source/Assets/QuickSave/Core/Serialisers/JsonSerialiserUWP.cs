@@ -9,7 +9,7 @@
 #if NETFX_CORE
 using Newtonsoft.Json;
 
-namespace CI.QuickSave.Core
+namespace CI.QuickSave.Core.Serialisers
 {
     public class JsonSerialiserUWP : IJsonSerialiser
     {

@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using CI.QuickSave.Core.Models;
+using CI.QuickSave.Core.Serialisers;
 
-namespace CI.QuickSave.Core
+namespace CI.QuickSave.Core.Helpers
 {
     public static class TypeHelper
     {

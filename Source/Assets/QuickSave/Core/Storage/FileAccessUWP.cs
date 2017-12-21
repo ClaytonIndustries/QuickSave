@@ -6,17 +6,18 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#if !NETFX_CORE
+#if NETFX_CORE
+using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using UnityEngine;
+using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.Storage;
 
-namespace CI.QuickSave.Core
+namespace CI.QuickSave.Core.Storage
 {
-    public class FileAccessMono : IFileAccess
+    public class FileAccessUWP : IFileAccess
     {
-        private static readonly string _basePath = Path.Combine(Application.persistentDataPath, "QuickSave");
+        private static StorageFolder _baseFolder;
 
         public bool SaveString(string filename, string value)
         {
@@ -24,10 +25,9 @@ namespace CI.QuickSave.Core
             {
                 CreateRootFolder();
 
-                using (StreamWriter writer = new StreamWriter(Path.Combine(_basePath, filename)))
-                {
-                    writer.Write(value);
-                }
+                StorageFile file = _baseFolder.CreateFileAsync(filename, CreationCollisionOption.ReplaceExisting).AsTask().Result;
+
+                FileIO.WriteTextAsync(file, value).AsTask().Wait();
 
                 return true;
             }
@@ -44,10 +44,9 @@ namespace CI.QuickSave.Core
             {
                 CreateRootFolder();
 
-                using (FileStream fileStream = new FileStream(Path.Combine(_basePath, filename), FileMode.Create))
-                {
-                    fileStream.Write(value, 0, value.Length);
-                }
+                StorageFile file = _baseFolder.CreateFileAsync(filename, CreationCollisionOption.ReplaceExisting).AsTask().Result;
+
+                FileIO.WriteBytesAsync(file, value).AsTask().Wait();
 
                 return true;
             }
@@ -64,13 +63,9 @@ namespace CI.QuickSave.Core
             {
                 CreateRootFolder();
 
-                if (Exists(filename))
-                {
-                    using (StreamReader reader = new StreamReader(Path.Combine(_basePath, filename)))
-                    {
-                        return reader.ReadToEnd();
-                    }
-                }
+                StorageFile file = _baseFolder.GetFileAsync(filename).AsTask().Result;
+
+                return FileIO.ReadTextAsync(file).AsTask().Result;
             }
             catch
             {
@@ -85,17 +80,9 @@ namespace CI.QuickSave.Core
             {
                 CreateRootFolder();
 
-                if (Exists(filename))
-                {
-                    using (FileStream fileStream = new FileStream(Path.Combine(_basePath, filename), FileMode.Open))
-                    {
-                        byte[] buffer = new byte[fileStream.Length];
+                StorageFile file = _baseFolder.GetFileAsync(filename).AsTask().Result;
 
-                        fileStream.Read(buffer, 0, buffer.Length);
-
-                        return buffer;
-                    }
-                }
+                return FileIO.ReadBufferAsync(file).AsTask().Result.ToArray();
             }
             catch
             {
@@ -110,9 +97,9 @@ namespace CI.QuickSave.Core
             {
                 CreateRootFolder();
 
-                string fileLocation = Path.Combine(_basePath, filename);
+                StorageFile file = _baseFolder.GetFileAsync(filename).AsTask().Result;
 
-                File.Delete(fileLocation);
+                file.DeleteAsync().AsTask().Wait();
             }
             catch
             {
@@ -121,9 +108,19 @@ namespace CI.QuickSave.Core
 
         public bool Exists(string filename)
         {
-            string fileLocation = Path.Combine(_basePath, filename);
+            try
+            {
+                CreateRootFolder();
 
-            return File.Exists(fileLocation);
+                _baseFolder.GetFileAsync(filename).AsTask().Wait();
+
+                return true;
+            }
+            catch
+            {
+            }
+
+            return false;
         }
 
         public IEnumerable<string> Files(bool includeExtensions)
@@ -132,13 +129,13 @@ namespace CI.QuickSave.Core
             {
                 CreateRootFolder();
 
-                if(includeExtensions)
+                if (includeExtensions)
                 {
-                    return Directory.GetFiles(_basePath, "*.json").Select(x => Path.GetFileName(x));
+                    return _baseFolder.GetFilesAsync().AsTask().Result.Where(x => x.FileType == ".json").Select(x => x.Name).ToList();
                 }
                 else
                 {
-                    return Directory.GetFiles(_basePath, "*.json").Select(x => Path.GetFileNameWithoutExtension(x));
+                    return _baseFolder.GetFilesAsync().AsTask().Result.Select(x => x.DisplayName).ToList();
                 }
             }
             catch
@@ -150,10 +147,15 @@ namespace CI.QuickSave.Core
 
         private void CreateRootFolder()
         {
-            if (!Directory.Exists(_basePath))
+            StorageFolder folder = ApplicationData.Current.LocalFolder;
+
+            try
             {
-                Directory.CreateDirectory(_basePath);
+                _baseFolder = folder.CreateFolderAsync("QuickSave", CreationCollisionOption.OpenIfExists).AsTask().Result;
             }
+            catch
+            {
+            }        
         }
     }
 }

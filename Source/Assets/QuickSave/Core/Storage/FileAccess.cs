@@ -8,7 +8,7 @@
 
 using System.Collections.Generic;
 
-namespace CI.QuickSave.Core
+namespace CI.QuickSave.Core.Storage
 {
     public static class FileAccess
     {

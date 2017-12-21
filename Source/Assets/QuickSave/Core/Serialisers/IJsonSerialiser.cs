@@ -6,11 +6,11 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-namespace CI.QuickSave.Core
+namespace CI.QuickSave.Core.Serialisers
 {
-    public interface ICryptography
+    public interface IJsonSerialiser
     {
-        string Encrypt(string value, SecurityMode securityMode, string password);
-        string Decrypt(string value, SecurityMode securityMode, string password);
+        string Serialise<T>(T value);
+        T Deserialise<T>(string json);
     }
 }

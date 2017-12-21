@@ -12,7 +12,7 @@ using JsonFx.Json.Resolvers;
 using JsonFx.Serialization;
 using JsonFx.Serialization.Resolvers;
 
-namespace CI.QuickSave.Core
+namespace CI.QuickSave.Core.Serialisers
 {
     public class JsonSerialiserMono : IJsonSerialiser
     {

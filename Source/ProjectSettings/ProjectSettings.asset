@@ -547,7 +547,7 @@ PlayerSettings:
   m_MobileRenderingPath: 1
   metroPackageName: Quick Save
   metroPackageVersion: 
-  metroCertificatePath: C:\Users\mike-\Documents\Projects\quick-save\Source\Assets\WSATestCertificate.pfx
+  metroCertificatePath: Assets\WSATestCertificate.pfx
   metroCertificatePassword: 
   metroCertificateSubject: DefaultCompany
   metroCertificateIssuer: DefaultCompany

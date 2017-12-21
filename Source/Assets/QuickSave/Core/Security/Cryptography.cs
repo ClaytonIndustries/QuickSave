@@ -6,7 +6,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-namespace CI.QuickSave.Core
+namespace CI.QuickSave.Core.Security
 {
     public static class Cryptography
     {

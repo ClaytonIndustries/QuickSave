@@ -6,7 +6,9 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-namespace CI.QuickSave.Core
+using CI.QuickSave.Core.Helpers;
+
+namespace CI.QuickSave.Core.Serialisers
 {
     public static class JsonSerialiser
     {

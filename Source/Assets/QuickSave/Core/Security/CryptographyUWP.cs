@@ -11,7 +11,7 @@ using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.Core;
 using Windows.Storage.Streams;
 
-namespace CI.QuickSave.Core
+namespace CI.QuickSave.Core.Security
 {
     public class CryptographyUWP : ICryptography
     {
