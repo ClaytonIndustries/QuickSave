@@ -827,6 +827,10 @@ MonoBehaviour:
   Input2: {fileID: 439977912}
   Input3: {fileID: 1189437838}
   Input4: {fileID: 149663564}
+  Input5: {fileID: 177643620}
+  Input6: {fileID: 144304267}
+  Input7: {fileID: 63529845}
+  Input8: {fileID: 23638345}
   Content: {fileID: 634087135}
 --- !u!4 &164559444
 Transform:
@@ -1743,7 +1747,7 @@ MonoBehaviour:
   m_InputType: 0
   m_AsteriskChar: 42
   m_KeyboardType: 0
-  m_LineType: 0
+  m_LineType: 2
   m_HideMobileInput: 0
   m_CharacterValidation: 0
   m_CharacterLimit: 0
@@ -2425,7 +2429,7 @@ MonoBehaviour:
     m_Alignment: 0
     m_AlignByGeometry: 0
     m_RichText: 0
-    m_HorizontalOverflow: 1
+    m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: 
