@@ -11,6 +11,12 @@ Support Website: http://www.claytoninds.com/
 Support Email: clayton.inds+support@gmail.com
 
 ------------------------------------------------------------------------------------------------------------------------
+Why not check out our other plugins:
+- Http Client (Http requests made easy)
+- Task Parallel (Threading made easy)
+- Windows Store Native (Windows UWP integration made easy)
+
+------------------------------------------------------------------------------------------------------------------------
 Quick Save makes use of JSONFX and is used under the following license
 
 Distributed under the terms of an MIT-style license:
