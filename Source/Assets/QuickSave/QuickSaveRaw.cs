@@ -120,6 +120,17 @@ namespace CI.QuickSave
         }
 
         /// <summary>
+        /// Loads an asset stored in a resources folder
+        /// </summary>
+        /// <typeparam name="T">The type of asset to load</typeparam>
+        /// <param name="filename">The path of the asset to load, relative to the Assets folder and without an extension</param>
+        /// <returns>The specified asset</returns>
+        public static T LoadResource<T>(string filename) where T : UnityEngine.Object
+        {
+            return UnityEngine.Resources.Load<T>(filename);
+        }
+
+        /// <summary>
         /// Deletes the specified file if it exists
         /// </summary>
         /// <param name="filename">The file to delete</param>
