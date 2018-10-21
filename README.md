@@ -13,4 +13,4 @@ Quick Save is a plugin that makes it easy to save and load content to / from fil
  
 ## Documentation
 
-Available [here](https://www.claytoninds.com/#quicksave)
+Available [here](https://github.com/ClaytonIndustries/QuickSave/wiki)
