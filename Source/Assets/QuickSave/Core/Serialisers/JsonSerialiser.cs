@@ -7,31 +7,28 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 using CI.QuickSave.Core.Helpers;
+using Newtonsoft.Json;
 
 namespace CI.QuickSave.Core.Serialisers
 {
     public static class JsonSerialiser
     {
-#if !NETFX_CORE
-        private static IJsonSerialiser _serialiser = new JsonSerialiserMono();
-#else
-        private static IJsonSerialiser _serialiser = new JsonSerialiserUWP();
-#endif
-
         public static string Serialise<T>(T value)
         {
-            return _serialiser.Serialise(value);
+            return JsonConvert.SerializeObject(value);
         }
 
         public static T Deserialise<T>(string json)
         {
             if (TypeHelper.IsUnityType<T>())
             {
-                return TypeHelper.DeserialiseUnityType<T>(json, _serialiser);
+                //return TypeHelper.DeserialiseUnityType<T>(json, _serialiser);
+
+                return JsonConvert.DeserializeObject<T>(json);
             }
             else
             {
-                return _serialiser.Deserialise<T>(json);
+                return JsonConvert.DeserializeObject<T>(json);
             }
         }
     }
