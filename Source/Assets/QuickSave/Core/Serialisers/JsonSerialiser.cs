@@ -22,9 +22,7 @@ namespace CI.QuickSave.Core.Serialisers
         {
             if (TypeHelper.IsUnityType<T>())
             {
-                //return TypeHelper.DeserialiseUnityType<T>(json, _serialiser);
-
-                return JsonConvert.DeserializeObject<T>(json);
+                return TypeHelper.DeserialiseUnityType<T>(json);
             }
             else
             {

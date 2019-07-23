@@ -22,19 +22,19 @@ namespace CI.QuickSave.Core.Helpers
             { "UnityEngine.Sprite", new Func<object, object>((value) => { return Sprite.FromUnityType((UnityEngine.Sprite)value); }) }
         };
 
-        private static readonly IDictionary<string, Func<string, IJsonSerialiser, object>> _quickSaveTypeToUnityType = new Dictionary<string, Func<string, IJsonSerialiser, object>>()
+        private static readonly IDictionary<string, Func<string, object>> _quickSaveTypeToUnityType = new Dictionary<string, Func<string, object>>()
         {
-            { "UnityEngine.Vector2", new Func<string, IJsonSerialiser, object>((value, serialiser) => { return serialiser.Deserialise<Vector2>(value).ToUnityType(); }) },
-            { "UnityEngine.Vector3", new Func<string, IJsonSerialiser, object>((value, serialiser) => { return serialiser.Deserialise<Vector3>(value).ToUnityType(); }) },
-            { "UnityEngine.Vector4", new Func<string, IJsonSerialiser, object>((value, serialiser) => { return serialiser.Deserialise<Vector4>(value).ToUnityType(); }) },
-            { "UnityEngine.Quaternion", new Func<string, IJsonSerialiser, object>((value, serialiser) => { return serialiser.Deserialise<Quaternion>(value).ToUnityType(); }) },
-            { "UnityEngine.Color", new Func<string, IJsonSerialiser, object>((value, serialiser) => { return serialiser.Deserialise<Color>(value).ToUnityType(); }) },
-            { "UnityEngine.Color32", new Func<string, IJsonSerialiser, object>((value, serialiser) => { return serialiser.Deserialise<Color32>(value).ToUnityType(); }) },
-            { "UnityEngine.Rect", new Func<string, IJsonSerialiser, object>((value, serialiser) => { return serialiser.Deserialise<Rect>(value).ToUnityType(); }) },
-            { "UnityEngine.Bounds", new Func<string, IJsonSerialiser, object>((value, serialiser) => { return serialiser.Deserialise<Bounds>(value).ToUnityType(); }) },
-            { "UnityEngine.Matrix4x4", new Func<string, IJsonSerialiser, object>((value, serialiser) => { return serialiser.Deserialise<Matrix4x4>(value).ToUnityType(); }) },
-            { "UnityEngine.Texture2D", new Func<string, IJsonSerialiser, object>((value, serialiser) => { return serialiser.Deserialise<Texture2D>(value).ToUnityType(); }) },
-            { "UnityEngine.Sprite", new Func<string, IJsonSerialiser, object>((value, serialiser) => { return serialiser.Deserialise<Sprite>(value).ToUnityType(); }) }
+            { "UnityEngine.Vector2", new Func<string, object>((value) => { return JsonSerialiser.Deserialise<Vector2>(value).ToUnityType(); }) },
+            { "UnityEngine.Vector3", new Func<string, object>((value) => { return JsonSerialiser.Deserialise<Vector3>(value).ToUnityType(); }) },
+            { "UnityEngine.Vector4", new Func<string, object>((value) => { return JsonSerialiser.Deserialise<Vector4>(value).ToUnityType(); }) },
+            { "UnityEngine.Quaternion", new Func<string, object>((value) => { return JsonSerialiser.Deserialise<Quaternion>(value).ToUnityType(); }) },
+            { "UnityEngine.Color", new Func<string, object>((value) => { return JsonSerialiser.Deserialise<Color>(value).ToUnityType(); }) },
+            { "UnityEngine.Color32", new Func<string, object>((value) => { return JsonSerialiser.Deserialise<Color32>(value).ToUnityType(); }) },
+            { "UnityEngine.Rect", new Func<string, object>((value) => { return JsonSerialiser.Deserialise<Rect>(value).ToUnityType(); }) },
+            { "UnityEngine.Bounds", new Func<string, object>((value) => { return JsonSerialiser.Deserialise<Bounds>(value).ToUnityType(); }) },
+            { "UnityEngine.Matrix4x4", new Func<string, object>((value) => { return JsonSerialiser.Deserialise<Matrix4x4>(value).ToUnityType(); }) },
+            { "UnityEngine.Texture2D", new Func<string, object>((value) => { return JsonSerialiser.Deserialise<Texture2D>(value).ToUnityType(); }) },
+            { "UnityEngine.Sprite", new Func<string, object>((value) => { return JsonSerialiser.Deserialise<Sprite>(value).ToUnityType(); }) }
         };
 
         public static object ReplaceIfUnityType<T>(T value)
@@ -56,11 +56,11 @@ namespace CI.QuickSave.Core.Helpers
             return _unityTypeToQuickSaveType.ContainsKey(typename);
         }
 
-        public static T DeserialiseUnityType<T>(string value, IJsonSerialiser jsonSerialiser)
+        public static T DeserialiseUnityType<T>(string value)
         {
             string typename = typeof(T).FullName;
 
-            return (T)_quickSaveTypeToUnityType[typename](value, jsonSerialiser);
+            return (T)_quickSaveTypeToUnityType[typename](value);
         }
     }
 }
