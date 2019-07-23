@@ -14,11 +14,7 @@ namespace CI.QuickSave.Core.Storage
     {
         private static readonly string _defaultExtension = ".json";
 
-#if !NETFX_CORE
         private static IFileAccess _storage = new FileAccessMono();
-#else
-        private static IFileAccess _storage = new FileAccessUWP();
-#endif
 
         public static bool SaveString(string filename, bool includesExtension, string value)
         {
@@ -50,14 +46,14 @@ namespace CI.QuickSave.Core.Storage
             return _storage.Exists(GetFilenameWithExtension(filename, includesExtension));
         }
 
-        private static string GetFilenameWithExtension(string filename, bool includesExtension)
-        {
-            return includesExtension ? filename : filename + _defaultExtension;
-        }
-
         public static IEnumerable<string> Files(bool includeExtensions)
         {
             return _storage.Files(includeExtensions);
+        }
+
+        private static string GetFilenameWithExtension(string filename, bool includesExtension)
+        {
+            return includesExtension ? filename : filename + _defaultExtension;
         }
     }
 }
