@@ -14,3 +14,4 @@ Temp
 /Source/obj/*
 /Source/UWP/*
 /Source/.vs/*
+/Source/Logs/*
