@@ -48,23 +48,24 @@ namespace CI.QuickSave.Core.Settings
                 return value;
             }
 
-            using (Aes encryptor = Aes.Create())
+            using (var encryptor = Aes.Create())
             {
                 Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes(encryptionKey, new byte[] { 0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d, 0x65, 0x64, 0x76, 0x65, 0x64, 0x65, 0x76 });
 
                 encryptor.Key = pdb.GetBytes(32);
                 encryptor.IV = pdb.GetBytes(16);
 
-                byte[] data = Encoding.UTF8.GetBytes(value);
+                byte[] bytes = Encoding.UTF8.GetBytes(value);
 
-                using (MemoryStream ms = new MemoryStream())
+                using (var streamIn = new MemoryStream(bytes))
+                using (var streamOut = new MemoryStream())
                 {
-                    using (CryptoStream cs = new CryptoStream(ms, encryptor.CreateEncryptor(), CryptoStreamMode.Write))
+                    using (var cryptoStream = new CryptoStream(streamOut, encryptor.CreateEncryptor(), CryptoStreamMode.Write))
                     {
-                        cs.Write(data, 0, data.Length);
+                        streamIn.CopyTo(cryptoStream);
                     }
 
-                    return Convert.ToBase64String(ms.ToArray());
+                    return Convert.ToBase64String(streamOut.ToArray());
                 }
             }
         }
@@ -76,24 +77,24 @@ namespace CI.QuickSave.Core.Settings
                 return value;
             }
 
-            using (Aes decryptor = Aes.Create())
+            using (var decryptor = Aes.Create())
             {
                 Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes(encryptionKey, new byte[] { 0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d, 0x65, 0x64, 0x76, 0x65, 0x64, 0x65, 0x76 });
 
                 decryptor.Key = pdb.GetBytes(32);
                 decryptor.IV = pdb.GetBytes(16);
 
-                byte[] data = Convert.FromBase64String(value);
+                byte[] bytes = Convert.FromBase64String(value);
 
-                using (MemoryStream ms = new MemoryStream(data))
+                using (var streamIn = new MemoryStream(bytes))
+                using (var streamOut = new MemoryStream())
                 {
-                    using (CryptoStream cs = new CryptoStream(ms, decryptor.CreateDecryptor(), CryptoStreamMode.Read))
+                    using (var cryptoStream = new CryptoStream(streamIn, decryptor.CreateDecryptor(), CryptoStreamMode.Read))
                     {
-                        using (StreamReader reader = new StreamReader(cs))
-                        {
-                            return reader.ReadToEnd();
-                        }
+                        cryptoStream.CopyTo(streamOut);
                     }
+
+                    return Encoding.UTF8.GetString(streamOut.ToArray());
                 }
             }
         }
