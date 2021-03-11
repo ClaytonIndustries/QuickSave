@@ -6,22 +6,13 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using CI.QuickSave.Core.Security;
-using CI.QuickSave.Core.Serialisers;
-using CI.QuickSave.Core.Storage;
 
 namespace CI.QuickSave
 {
-    public class QuickSaveWriter
+    public class QuickSaveWriter : QuickSaveBase
     {
-        private readonly string _root;
-        private readonly QuickSaveSettings _settings;
-
-        private Dictionary<string, object> _items;
-
         private QuickSaveWriter(string root, QuickSaveSettings settings)
         {
             _root = root;
@@ -47,7 +38,7 @@ namespace CI.QuickSave
         public static QuickSaveWriter Create(string root, QuickSaveSettings settings)
         {
             QuickSaveWriter quickSaveWriter = new QuickSaveWriter(root, settings);
-            quickSaveWriter.Open();
+            quickSaveWriter.Open(true);
             return quickSaveWriter;
         }
 
@@ -106,32 +97,7 @@ namespace CI.QuickSave
         /// </summary>
         public void Commit()
         {
-            string jsonToSave;
-
-            try
-            {
-                jsonToSave = JsonSerialiser.Serialise(_items);
-            }
-            catch (Exception e)
-            {
-                throw new QuickSaveException("Json serialisation failed", e);
-            }
-
-            string encryptedJson;
-
-            try
-            {
-                encryptedJson = Cryptography.Encrypt(jsonToSave, _settings.SecurityMode, _settings.Password);
-            }
-            catch (Exception e)
-            {
-                throw new QuickSaveException("Encryption failed", e);
-            }
-
-            if (!FileAccess.SaveString(_root, false, encryptedJson))
-            {
-                throw new QuickSaveException("Failed to write to file");
-            }
+            Save();
         }
 
         /// <summary>
@@ -142,49 +108,13 @@ namespace CI.QuickSave
         {
             try
             {
-                string jsonToSave = JsonSerialiser.Serialise(_items);
-
-                string encryptedJson = Cryptography.Encrypt(jsonToSave, _settings.SecurityMode, _settings.Password);
-
-                FileAccess.SaveString(_root, false, encryptedJson);
+                Save();
 
                 return true;
             }
             catch
             {
                 return false;
-            }
-        }
-
-        private void Open()
-        {
-            string fileJson = FileAccess.LoadString(_root, false);
-
-            if (string.IsNullOrEmpty(fileJson))
-            {
-                _items = new Dictionary<string, object>();
-
-                return;
-            }
-
-            string decryptedJson;
-
-            try
-            {
-                decryptedJson = Cryptography.Decrypt(fileJson, _settings.SecurityMode, _settings.Password);
-            }
-            catch (Exception e)
-            {
-                throw new QuickSaveException("Decryption failed", e);
-            }
-
-            try
-            {
-                _items = JsonSerialiser.Deserialise<Dictionary<string, object>>(decryptedJson) ?? new Dictionary<string, object>();
-            }
-            catch (Exception e)
-            {
-                throw new QuickSaveException("Failed to deserialise json", e);
             }
         }
     }

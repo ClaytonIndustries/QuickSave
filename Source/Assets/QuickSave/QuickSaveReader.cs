@@ -9,19 +9,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CI.QuickSave.Core.Security;
 using CI.QuickSave.Core.Serialisers;
-using CI.QuickSave.Core.Storage;
+using Newtonsoft.Json.Linq;
 
 namespace CI.QuickSave
 {
-    public class QuickSaveReader
+    public class QuickSaveReader : QuickSaveBase
     {
-        private readonly string _root;
-        private readonly QuickSaveSettings _settings;
-
-        private Dictionary<string, object> _items;
-
         private QuickSaveReader(string root, QuickSaveSettings settings)
         {
             _root = root;
@@ -47,7 +41,7 @@ namespace CI.QuickSave
         public static QuickSaveReader Create(string root, QuickSaveSettings settings)
         {
             QuickSaveReader quickSaveReader = new QuickSaveReader(root, settings);
-            quickSaveReader.Open();
+            quickSaveReader.Open(false);
             return quickSaveReader;
         }
 
@@ -151,36 +145,6 @@ namespace CI.QuickSave
         public IEnumerable<string> GetAllKeys()
         {
             return _items.Keys.ToList();
-        }
-
-        private void Open()
-        {
-            string fileJson = FileAccess.LoadString(_root, false);
-
-            if (string.IsNullOrEmpty(fileJson))
-            {
-                throw new QuickSaveException("Root does not exist");
-            }
-
-            string decryptedJson;
-
-            try
-            {
-                decryptedJson = Cryptography.Decrypt(fileJson, _settings.SecurityMode, _settings.Password);
-            }
-            catch (Exception e)
-            {
-                throw new QuickSaveException("Decryption failed", e);
-            }
-
-            try
-            {
-                _items = JsonSerialiser.Deserialise<Dictionary<string, object>>(decryptedJson);
-            }
-            catch (Exception e)
-            {
-                throw new QuickSaveException("Failed to deserialise json", e);
-            }
         }
     }
 }

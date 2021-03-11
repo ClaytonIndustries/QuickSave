@@ -8,7 +8,7 @@
 
 using System;
 using System.Collections.Generic;
-using CI.QuickSave.Core.Security;
+using CI.QuickSave.Core.Settings;
 using CI.QuickSave.Core.Storage;
 
 namespace CI.QuickSave
@@ -37,7 +37,16 @@ namespace CI.QuickSave
 
             try
             {
-                encryptedText = Cryptography.Encrypt(content, settings.SecurityMode, settings.Password);
+                encryptedText = Compression.Compress(content, settings.CompressionMode);
+            }
+            catch (Exception e)
+            {
+                throw new QuickSaveException("Encryption failed", e);
+            }
+
+            try
+            {
+                encryptedText = Cryptography.Encrypt(encryptedText, settings.SecurityMode, settings.Password);
             }
             catch (Exception e)
             {
@@ -97,6 +106,15 @@ namespace CI.QuickSave
             catch (Exception e)
             {
                 throw new QuickSaveException("Decryption failed", e);
+            }
+
+            try
+            {
+                decryptedText = Compression.Decompress(decryptedText, settings.CompressionMode);
+            }
+            catch (Exception e)
+            {
+                throw new QuickSaveException("Decompression failed", e);
             }
 
             return decryptedText;
