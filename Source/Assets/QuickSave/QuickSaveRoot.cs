@@ -8,7 +8,6 @@
 
 using System;
 using System.Collections.Generic;
-using CI.QuickSave.Core.Helpers;
 using CI.QuickSave.Core.Security;
 using CI.QuickSave.Core.Serialisers;
 using CI.QuickSave.Core.Storage;
@@ -41,7 +40,7 @@ namespace CI.QuickSave
 
             try
             {
-                jsonToSave = JsonSerialiser.Serialise(TypeHelper.ReplaceIfUnityType(value));
+                jsonToSave = JsonSerialiser.Serialise(value);
             }
             catch (Exception e)
             {
