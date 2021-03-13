@@ -3,14 +3,6 @@ using CI.QuickSave;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Test
-{
-    public Quaternion q;
-    public Matrix4x4 m;
-    public Color c;
-    public List<int> l;
-}
-
 public class ExampleSceneManagerController : MonoBehaviour
 {
     public InputField Input1;
@@ -25,57 +17,23 @@ public class ExampleSceneManagerController : MonoBehaviour
 
     public void Save()
     {
-        Texture2D texture2D = QuickSaveRaw.LoadResource<Texture2D>("bat");
-
-        Sprite p = Sprite.Create(texture2D, new Rect(0f, 0f, 40, 10), new Vector2(0.5f, 0.5f));
-
-        Mesh mesh = new Mesh() { vertices = new Vector3[] { new Vector3(1, 1, 1) }, boneWeights = new BoneWeight[] { new BoneWeight() { boneIndex0 = 12 } } };
-
-        QuickSaveWriter.Create("Inputs", new QuickSaveSettings())
-                       .Write("Input1", new Matrix4x4(new Vector4(1, 2, 3, 4), new Vector4(1, 2, 3, 4), new Vector4(1, 2, 3, 4), new Vector4(1, 2, 3, 4)))
-                       .Write("Input2", new Bounds(new Vector3(1, 2, 3), new Vector3(23.5f, 34.2f, 234f)))
-                       .Write("Input3", mesh)
-                       .Write("Input4", p)
+        QuickSaveWriter.Create("Inputs")
+                       .Write("Input1", Input1.text)
+                       .Write("Input2", Input2.text)
+                       .Write("Input3", Input3.text)
+                       .Write("Input4", Input4.text)
                        .Commit();
-
-        //var test = new Test()
-        //{
-        //    q = new Quaternion(),
-        //    m = new Matrix4x4(),
-        //    c = new Color(),
-        //    l = new List<int>()
-        //    {
-        //        1, 2, 3, 4, 5, 6
-        //    }
-        //};
-
-        //QuickSaveWriter.Create("Inputs", new QuickSaveSettings())
-        //               .Write("Input1", new Matrix4x4(new Vector4(1, 2, 3, 4), new Vector4(1, 2, 3, 4), new Vector4(1, 2, 3, 4), new Vector4(1, 2, 3, 4)))
-        //               .Write("Input2", "Hello")
-        //               .Write("Input3", new Vector2())
-        //               .Write("Input4", test)
-        //               .Commit();
-
 
         Content.text = QuickSaveRaw.LoadString("Inputs.json");
     }
 
     public void Load()
     {
-        //Sprite sprite;
-
-        //QuickSaveReader.Create("Inputs", new QuickSaveSettings() { CompressionMode = CompressionMode.Gzip, SecurityMode = SecurityMode.Aes, Password = "HelloWorld" })
-        //               .Read<Matrix4x4>("Input1", (r) => { Input5.text = r.ToString(); })
-        //               .Read<Bounds>("Input2", (r) => { Input6.text = r.ToString(); })
-        //               .Read<Mesh>("Input3", (r) => { Input7.text = r.ToString(); })
-        //               .Read<Sprite>("Input4", (r) => { Input8.text = r.ToString(); sprite = r; });
-
-
-
-        var reader =  QuickSaveReader.Create("Inputs", new QuickSaveSettings());
-
-        var hi = reader.Read<Mesh>("Input4");
-        Input8.text = hi.ToString();
+        QuickSaveReader.Create("Inputs")
+                       .Read<string>("Input1", (r) => { Input5.text = r; })
+                       .Read<string>("Input2", (r) => { Input6.text = r; })
+                       .Read<string>("Input3", (r) => { Input7.text = r; })
+                       .Read<string>("Input4", (r) => { Input8.text = r; });
     }
 
     public void QuickSaveRawExample()
