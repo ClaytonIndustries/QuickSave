@@ -7,10 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using CI.QuickSave.Core.Serialisers;
-using Newtonsoft.Json.Linq;
 
 namespace CI.QuickSave
 {
@@ -41,7 +38,7 @@ namespace CI.QuickSave
         public static QuickSaveReader Create(string root, QuickSaveSettings settings)
         {
             QuickSaveReader quickSaveReader = new QuickSaveReader(root, settings);
-            quickSaveReader.Open(false);
+            quickSaveReader.Load(false);
             return quickSaveReader;
         }
 
@@ -53,20 +50,18 @@ namespace CI.QuickSave
         /// <returns>The object that was loaded</returns>
         public T Read<T>(string key)
         {
-            if (!_items.ContainsKey(key))
+            if (!Exists(key))
             {
                 throw new QuickSaveException("Key does not exists");
             }
 
             try
             {
-                string propertyJson = JsonSerialiser.Serialise(_items[key]);
-
-                return JsonSerialiser.Deserialise<T>(propertyJson);
+                return JsonSerialiser.DeserialiseKey<T>(key, _items);
             }
             catch
             {
-                throw new QuickSaveException("Unable to deserialise json");
+                throw new QuickSaveException("Deserialisation failed");
             }
         }
 
@@ -79,20 +74,18 @@ namespace CI.QuickSave
         /// <returns>The QuickSaveReader</returns>
         public QuickSaveReader Read<T>(string key, Action<T> result)
         {
-            if (!_items.ContainsKey(key))
+            if (!Exists(key))
             {
                 throw new QuickSaveException("Key does not exists");
             }
 
             try
             {
-                string propertyJson = JsonSerialiser.Serialise(_items[key]);
-
-                result(JsonSerialiser.Deserialise<T>(propertyJson));
+                result(JsonSerialiser.DeserialiseKey<T>(key, _items));
             }
             catch
             {
-                throw new QuickSaveException("Unable to deserialise json");
+                throw new QuickSaveException("Deserialisation failed");
             }
 
             return this;
@@ -109,16 +102,14 @@ namespace CI.QuickSave
         {
             result = default(T);
 
-            if (!_items.ContainsKey(key))
+            if (!Exists(key))
             {
                 return false;
             }
 
             try
             {
-                string propertyJson = JsonSerialiser.Serialise(_items[key]);
-
-                result = JsonSerialiser.Deserialise<T>(propertyJson);
+                result = JsonSerialiser.DeserialiseKey<T>(key, _items);
 
                 return true;
             }
@@ -126,25 +117,6 @@ namespace CI.QuickSave
             {
                 return false;
             }
-        }
-
-        /// <summary>
-        /// Determines if the specified key exists
-        /// </summary>
-        /// <param name="key">The key to look for</param>
-        /// <returns>Does the key exist</returns>
-        public bool Exists(string key)
-        {
-            return _items.ContainsKey(key);
-        }
-
-        /// <summary>
-        /// Gets the names of all the keys under this root
-        /// </summary>
-        /// <returns>A collection of key names</returns>
-        public IEnumerable<string> GetAllKeys()
-        {
-            return _items.Keys.ToList();
         }
     }
 }

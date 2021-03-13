@@ -1,18 +1,39 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using CI.QuickSave.Core.Serialisers;
 using CI.QuickSave.Core.Settings;
 using CI.QuickSave.Core.Storage;
+using Newtonsoft.Json.Linq;
 
 namespace CI.QuickSave
 {
     public abstract class QuickSaveBase
     {
-        protected Dictionary<string, object> _items;
+        protected JObject _items;
         protected string _root;
         protected QuickSaveSettings _settings;
 
-        protected void Open(bool rootMightNotExist)
+        /// <summary>
+        /// Determines if the specified key exists
+        /// </summary>
+        /// <param name="key">The key to look for</param>
+        /// <returns>Does the key exist</returns>
+        public bool Exists(string key)
+        {
+            return _items[key] != null;
+        }
+
+        /// <summary>
+        /// Gets the names of all the keys under this root
+        /// </summary>
+        /// <returns>A collection of key names</returns>
+        public IEnumerable<string> GetAllKeys()
+        {
+            return _items.Properties().Select(x => x.Name).ToList();
+        }
+
+        protected void Load(bool rootMightNotExist)
         {
             var json = FileAccess.LoadString(_root, false);
 
@@ -20,7 +41,7 @@ namespace CI.QuickSave
             {
                 if (rootMightNotExist)
                 {
-                    _items = new Dictionary<string, object>();
+                    _items = new JObject();
 
                     return;
                 }
@@ -52,11 +73,11 @@ namespace CI.QuickSave
 
             try
             {
-                _items = JsonSerialiser.Deserialise<Dictionary<string, object>>(json) ?? new Dictionary<string, object>();
+                _items = JObject.Parse(json);
             }
             catch (Exception e)
             {
-                throw new QuickSaveException("Failed to deserialise json", e);
+                throw new QuickSaveException("Deserialisation failed", e);
             }
         }
 
@@ -70,7 +91,7 @@ namespace CI.QuickSave
             }
             catch (Exception e)
             {
-                throw new QuickSaveException("Json serialisation failed", e);
+                throw new QuickSaveException("Serialisation failed", e);
             }
 
             try
@@ -79,7 +100,7 @@ namespace CI.QuickSave
             }
             catch (Exception e)
             {
-                throw new QuickSaveException("Encryption failed", e);
+                throw new QuickSaveException("Compression failed", e);
             }
 
             // Gzip outputs base64 anyway so no need to do it twice

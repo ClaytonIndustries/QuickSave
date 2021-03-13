@@ -6,8 +6,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-using System.Collections.Generic;
-using System.Linq;
+using CI.QuickSave.Core.Serialisers;
 
 namespace CI.QuickSave
 {
@@ -38,7 +37,7 @@ namespace CI.QuickSave
         public static QuickSaveWriter Create(string root, QuickSaveSettings settings)
         {
             QuickSaveWriter quickSaveWriter = new QuickSaveWriter(root, settings);
-            quickSaveWriter.Open(true);
+            quickSaveWriter.Load(true);
             return quickSaveWriter;
         }
 
@@ -51,12 +50,12 @@ namespace CI.QuickSave
         /// <returns>The QuickSaveWriter</returns>
         public QuickSaveWriter Write<T>(string key, T value)
         {
-            if (_items.ContainsKey(key))
+            if (Exists(key))
             {
                 _items.Remove(key);
             }
 
-            _items.Add(key, value);
+            _items.Add(key, JsonSerialiser.SerialiseKey(value));
 
             return this;
         }
@@ -67,29 +66,10 @@ namespace CI.QuickSave
         /// <param name="key">The key to delete</param>
         public void Delete(string key)
         {
-            if (_items.ContainsKey(key))
+            if (Exists(key))
             {
                 _items.Remove(key);
             }
-        }
-
-        /// <summary>
-        /// Determines if the specified key exists
-        /// </summary>
-        /// <param name="key">The key to look for</param>
-        /// <returns>Does the key exist</returns>
-        public bool Exists(string key)
-        {
-            return _items.ContainsKey(key);
-        }
-
-        /// <summary>
-        /// Gets the names of all the keys under this root
-        /// </summary>
-        /// <returns>A collection of key names</returns>
-        public IEnumerable<string> GetAllKeys()
-        {
-            return _items.Keys.ToList();
         }
 
         /// <summary>

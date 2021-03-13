@@ -9,12 +9,13 @@
 using System.Collections.Generic;
 using CI.QuickSave.Core.Converters;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace CI.QuickSave.Core.Serialisers
 {
     public static class JsonSerialiser
     {
-        private static readonly JsonSerializerSettings settings = new JsonSerializerSettings()
+        private static readonly JsonSerializerSettings _settings = new JsonSerializerSettings()
         {
             Converters = new List<JsonConverter>()
             {
@@ -22,18 +23,28 @@ namespace CI.QuickSave.Core.Serialisers
                 new QuaternionConverter(),
                 new Matrix4x4Converter(),
                 new Texture2DConverter(),
-                new SpriteConverter()
+                new SpriteConverter(),
+                new Vector2Converter(),
+                new Vector3Converter(),
+                new Vector4Converter()
             }
         };
 
-        public static string Serialise<T>(T value)
+        private static JsonSerializer _serialiser = JsonSerializer.Create(_settings);
+
+        public static T DeserialiseKey<T>(string key, JObject data)
         {
-            return JsonConvert.SerializeObject(value, settings);
+            return data[key].ToObject<T>(_serialiser);
         }
 
-        public static T Deserialise<T>(string json)
+        public static JToken SerialiseKey<T>(T data)
         {
-            return JsonConvert.DeserializeObject<T>(json, settings);
+            return JToken.FromObject(data, _serialiser);
+        }
+
+        public static string Serialise<T>(T value)
+        {
+            return JsonConvert.SerializeObject(value, _settings);
         }
     }
 }

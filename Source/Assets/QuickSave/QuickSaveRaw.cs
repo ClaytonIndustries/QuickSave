@@ -41,7 +41,7 @@ namespace CI.QuickSave
             }
             catch (Exception e)
             {
-                throw new QuickSaveException("Encryption failed", e);
+                throw new QuickSaveException("Compression failed", e);
             }
 
             // Gzip outputs base64 anyway so no need to do it twice

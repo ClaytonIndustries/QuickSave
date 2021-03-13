@@ -9,7 +9,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using UnityEngine;
 
 namespace CI.QuickSave.Core.Storage
 {
@@ -17,7 +16,7 @@ namespace CI.QuickSave.Core.Storage
     {
         private const string _defaultExtension = ".json";
 
-        private static readonly string _basePath = Path.Combine(Application.persistentDataPath, "QuickSave");
+        private static readonly string _basePath = Path.Combine(QuickSaveGlobalSettings.StorageLocation, "QuickSave");
 
         public static bool SaveString(string filename, bool includesExtension, string value)
         {
