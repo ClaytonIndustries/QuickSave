@@ -16,7 +16,7 @@ namespace CI.QuickSave.Core.Storage
     {
         private const string _defaultExtension = ".json";
 
-        private static readonly string _basePath = Path.Combine(QuickSaveGlobalSettings.StorageLocation, "QuickSave");
+        private static string BasePath => Path.Combine(QuickSaveGlobalSettings.StorageLocation, "QuickSave");
 
         public static bool SaveString(string filename, bool includesExtension, string value)
         {
@@ -26,7 +26,7 @@ namespace CI.QuickSave.Core.Storage
             {
                 CreateRootFolder();
 
-                using (StreamWriter writer = new StreamWriter(Path.Combine(_basePath, filename)))
+                using (StreamWriter writer = new StreamWriter(Path.Combine(BasePath, filename)))
                 {
                     writer.Write(value);
                 }
@@ -48,7 +48,7 @@ namespace CI.QuickSave.Core.Storage
             {
                 CreateRootFolder();
 
-                using (FileStream fileStream = new FileStream(Path.Combine(_basePath, filename), FileMode.Create))
+                using (FileStream fileStream = new FileStream(Path.Combine(BasePath, filename), FileMode.Create))
                 {
                     fileStream.Write(value, 0, value.Length);
                 }
@@ -72,7 +72,7 @@ namespace CI.QuickSave.Core.Storage
 
                 if (Exists(filename, true))
                 {
-                    using (StreamReader reader = new StreamReader(Path.Combine(_basePath, filename)))
+                    using (StreamReader reader = new StreamReader(Path.Combine(BasePath, filename)))
                     {
                         return reader.ReadToEnd();
                     }
@@ -95,7 +95,7 @@ namespace CI.QuickSave.Core.Storage
 
                 if (Exists(filename, true))
                 {
-                    using (FileStream fileStream = new FileStream(Path.Combine(_basePath, filename), FileMode.Open))
+                    using (FileStream fileStream = new FileStream(Path.Combine(BasePath, filename), FileMode.Open))
                     {
                         byte[] buffer = new byte[fileStream.Length];
 
@@ -120,7 +120,7 @@ namespace CI.QuickSave.Core.Storage
             {
                 CreateRootFolder();
 
-                string fileLocation = Path.Combine(_basePath, filename);
+                string fileLocation = Path.Combine(BasePath, filename);
 
                 File.Delete(fileLocation);
             }
@@ -133,7 +133,7 @@ namespace CI.QuickSave.Core.Storage
         {
             filename = GetFilenameWithExtension(filename, includesExtension);
 
-            string fileLocation = Path.Combine(_basePath, filename);
+            string fileLocation = Path.Combine(BasePath, filename);
 
             return File.Exists(fileLocation);
         }
@@ -146,11 +146,11 @@ namespace CI.QuickSave.Core.Storage
 
                 if (includeExtensions)
                 {
-                    return Directory.GetFiles(_basePath, "*.json").Select(x => Path.GetFileName(x));
+                    return Directory.GetFiles(BasePath, "*.json").Select(x => Path.GetFileName(x));
                 }
                 else
                 {
-                    return Directory.GetFiles(_basePath, "*.json").Select(x => Path.GetFileNameWithoutExtension(x));
+                    return Directory.GetFiles(BasePath, "*.json").Select(x => Path.GetFileNameWithoutExtension(x));
                 }
             }
             catch
@@ -167,9 +167,9 @@ namespace CI.QuickSave.Core.Storage
 
         private static void CreateRootFolder()
         {
-            if (!Directory.Exists(_basePath))
+            if (!Directory.Exists(BasePath))
             {
-                Directory.CreateDirectory(_basePath);
+                Directory.CreateDirectory(BasePath);
             }
         }
     }
