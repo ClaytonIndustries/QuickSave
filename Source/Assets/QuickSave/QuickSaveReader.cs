@@ -118,5 +118,13 @@ namespace CI.QuickSave
                 return false;
             }
         }
+
+        /// <summary>
+        /// Reloads data from the root
+        /// </summary>
+        public void Reload()
+        {
+            Load(false);
+        }
     }
 }
