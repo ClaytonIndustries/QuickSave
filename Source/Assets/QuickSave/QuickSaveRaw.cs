@@ -8,7 +8,7 @@
 
 using System;
 using System.Collections.Generic;
-using CI.QuickSave.Core.Security;
+using CI.QuickSave.Core.Settings;
 using CI.QuickSave.Core.Storage;
 
 namespace CI.QuickSave
@@ -33,18 +33,31 @@ namespace CI.QuickSave
         /// <param name="settings">Settings</param>
         public static void SaveString(string filename, string content, QuickSaveSettings settings)
         {
-            string encryptedText;
+            string contentToWrite;
 
             try
             {
-                encryptedText = Cryptography.Encrypt(content, settings.SecurityMode, settings.Password);
+                contentToWrite = Compression.Compress(content, settings.CompressionMode);
             }
             catch (Exception e)
             {
-                throw new QuickSaveException("Encryption failed", e);
+                throw new QuickSaveException("Compression failed", e);
             }
 
-            if (!FileAccess.SaveString(filename, true, encryptedText))
+            // Gzip outputs base64 anyway so no need to do it twice
+            if (settings.CompressionMode != CompressionMode.Gzip || settings.SecurityMode != SecurityMode.Base64)
+            {
+                try
+                {
+                    contentToWrite = Cryptography.Encrypt(contentToWrite, settings.SecurityMode, settings.Password);
+                }
+                catch (Exception e)
+                {
+                    throw new QuickSaveException("Encryption failed", e);
+                }
+            }
+
+            if (!FileAccess.SaveString(filename, true, contentToWrite))
             {
                 throw new QuickSaveException("Failed to write to file");
             }
@@ -81,25 +94,36 @@ namespace CI.QuickSave
         /// <returns>The contents of the file as a string</returns>
         public static string LoadString(string filename, QuickSaveSettings settings)
         {
-            string content = FileAccess.LoadString(filename, true);
+            var content = FileAccess.LoadString(filename, true);
 
             if (content == null)
             {
                 throw new QuickSaveException("Failed to load file");
             }
 
-            string decryptedText;
+            // Gzip parses base64 anyway so no need to do it twice
+            if (settings.CompressionMode != CompressionMode.Gzip || settings.SecurityMode != SecurityMode.Base64)
+            {
+                try
+                {
+                    content = Cryptography.Decrypt(content, settings.SecurityMode, settings.Password);
+                }
+                catch (Exception e)
+                {
+                    throw new QuickSaveException("Decryption failed", e);
+                }
+            }
 
             try
             {
-                decryptedText = Cryptography.Decrypt(content, settings.SecurityMode, settings.Password);
+                content = Compression.Decompress(content, settings.CompressionMode);
             }
             catch (Exception e)
             {
-                throw new QuickSaveException("Decryption failed", e);
+                throw new QuickSaveException("Decompression failed", e);
             }
 
-            return decryptedText;
+            return content;
         }
 
         /// <summary>

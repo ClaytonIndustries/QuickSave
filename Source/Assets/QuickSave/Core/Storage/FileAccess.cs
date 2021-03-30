@@ -7,47 +7,157 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace CI.QuickSave.Core.Storage
 {
     public static class FileAccess
     {
-        private static readonly string _defaultExtension = ".json";
+        private const string _defaultExtension = ".json";
 
-#if !NETFX_CORE
-        private static IFileAccess _storage = new FileAccessMono();
-#else
-        private static IFileAccess _storage = new FileAccessUWP();
-#endif
+        private static string BasePath => Path.Combine(QuickSaveGlobalSettings.StorageLocation, "QuickSave");
 
         public static bool SaveString(string filename, bool includesExtension, string value)
         {
-            return _storage.SaveString(GetFilenameWithExtension(filename, includesExtension), value);
+            filename = GetFilenameWithExtension(filename, includesExtension);
+
+            try
+            {
+                CreateRootFolder();
+
+                using (StreamWriter writer = new StreamWriter(Path.Combine(BasePath, filename)))
+                {
+                    writer.Write(value);
+                }
+
+                return true;
+            }
+            catch
+            {
+            }
+
+            return false;
         }
 
         public static bool SaveBytes(string filename, bool includesExtension, byte[] value)
         {
-            return _storage.SaveBytes(GetFilenameWithExtension(filename, includesExtension), value);
+            filename = GetFilenameWithExtension(filename, includesExtension);
+
+            try
+            {
+                CreateRootFolder();
+
+                using (FileStream fileStream = new FileStream(Path.Combine(BasePath, filename), FileMode.Create))
+                {
+                    fileStream.Write(value, 0, value.Length);
+                }
+
+                return true;
+            }
+            catch
+            {
+            }
+
+            return false;
         }
 
         public static string LoadString(string filename, bool includesExtension)
         {
-            return _storage.LoadString(GetFilenameWithExtension(filename, includesExtension));
+            filename = GetFilenameWithExtension(filename, includesExtension);
+
+            try
+            {
+                CreateRootFolder();
+
+                if (Exists(filename, true))
+                {
+                    using (StreamReader reader = new StreamReader(Path.Combine(BasePath, filename)))
+                    {
+                        return reader.ReadToEnd();
+                    }
+                }
+            }
+            catch
+            {
+            }
+
+            return null;
         }
 
         public static byte[] LoadBytes(string filename, bool includesExtension)
         {
-            return _storage.LoadBytes(GetFilenameWithExtension(filename, includesExtension));
+            filename = GetFilenameWithExtension(filename, includesExtension);
+
+            try
+            {
+                CreateRootFolder();
+
+                if (Exists(filename, true))
+                {
+                    using (FileStream fileStream = new FileStream(Path.Combine(BasePath, filename), FileMode.Open))
+                    {
+                        byte[] buffer = new byte[fileStream.Length];
+
+                        fileStream.Read(buffer, 0, buffer.Length);
+
+                        return buffer;
+                    }
+                }
+            }
+            catch
+            {
+            }
+
+            return null;
         }
 
         public static void Delete(string filename, bool includesExtension)
         {
-            _storage.Delete(GetFilenameWithExtension(filename, includesExtension));
+            filename = GetFilenameWithExtension(filename, includesExtension);
+
+            try
+            {
+                CreateRootFolder();
+
+                string fileLocation = Path.Combine(BasePath, filename);
+
+                File.Delete(fileLocation);
+            }
+            catch
+            {
+            }
         }
 
         public static bool Exists(string filename, bool includesExtension)
         {
-            return _storage.Exists(GetFilenameWithExtension(filename, includesExtension));
+            filename = GetFilenameWithExtension(filename, includesExtension);
+
+            string fileLocation = Path.Combine(BasePath, filename);
+
+            return File.Exists(fileLocation);
+        }
+
+        public static IEnumerable<string> Files(bool includeExtensions)
+        {
+            try
+            {
+                CreateRootFolder();
+
+                if (includeExtensions)
+                {
+                    return Directory.GetFiles(BasePath, "*.json").Select(x => Path.GetFileName(x));
+                }
+                else
+                {
+                    return Directory.GetFiles(BasePath, "*.json").Select(x => Path.GetFileNameWithoutExtension(x));
+                }
+            }
+            catch
+            {
+            }
+
+            return new List<string>();
         }
 
         private static string GetFilenameWithExtension(string filename, bool includesExtension)
@@ -55,9 +165,12 @@ namespace CI.QuickSave.Core.Storage
             return includesExtension ? filename : filename + _defaultExtension;
         }
 
-        public static IEnumerable<string> Files(bool includeExtensions)
+        private static void CreateRootFolder()
         {
-            return _storage.Files(includeExtensions);
+            if (!Directory.Exists(BasePath))
+            {
+                Directory.CreateDirectory(BasePath);
+            }
         }
     }
 }

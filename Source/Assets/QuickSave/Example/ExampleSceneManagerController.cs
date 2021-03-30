@@ -35,21 +35,6 @@ public class ExampleSceneManagerController : MonoBehaviour
                        .Read<string>("Input4", (r) => { Input8.text = r; });
     }
 
-    public void QuickSaveRootExample()
-    {
-        // Use QuickSaveRoot to save / load individual objects to / from their own files
-
-        Texture2D texture2D = new Texture2D(1, 1);
-        texture2D.LoadImage(new byte[] { 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4 });
-        texture2D.Apply();
-
-        QuickSaveRoot.Save("RootName", texture2D);
-
-#pragma warning disable 0219
-        Texture2D loaded = QuickSaveRoot.Load<Texture2D>("RootName");
-#pragma warning restore 0219
-    }
-
     public void QuickSaveRawExample()
     {
         // Use QuickSaveRaw to directly save / load text or binary data to / from files

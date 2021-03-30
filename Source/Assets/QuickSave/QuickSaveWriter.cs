@@ -6,23 +6,12 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using CI.QuickSave.Core.Helpers;
-using CI.QuickSave.Core.Security;
 using CI.QuickSave.Core.Serialisers;
-using CI.QuickSave.Core.Storage;
 
 namespace CI.QuickSave
 {
-    public class QuickSaveWriter
+    public class QuickSaveWriter : QuickSaveBase
     {
-        private readonly string _root;
-        private readonly QuickSaveSettings _settings;
-
-        private Dictionary<string, object> _items;
-
         private QuickSaveWriter(string root, QuickSaveSettings settings)
         {
             _root = root;
@@ -40,68 +29,6 @@ namespace CI.QuickSave
         }
 
         /// <summary>
-        /// Attempts to save an object to a root under the specified key
-        /// </summary>
-        /// <typeparam name="T">The type of object to save</typeparam>
-        /// <param name="root">The root this object will be saved under</param>
-        /// <param name="key">The key this object will be saved under</param>
-        /// <param name="value">The object to save</param>
-        /// <returns>Was the save successful</returns>
-        public static bool TrySave<T>(string root, string key, T value)
-        {
-            return TrySave(root, key, value, new QuickSaveSettings());
-        }
-
-        /// <summary>
-        /// Attempts to save an object to a root under the specified key using the specified settings
-        /// </summary>
-        /// <typeparam name="T">The type of object to save</typeparam>
-        /// <param name="root">The root this object will be saved under</param>
-        /// <param name="key">The key this object will be saved under</param>
-        /// <param name="value">The object to save</param>
-        /// <param name="settings">Settings</param>
-        /// <returns>Was the save successful</returns>
-        public static bool TrySave<T>(string root, string key, T value, QuickSaveSettings settings)
-        {
-            try
-            {
-                string fileJson = FileAccess.LoadString(root, false);
-
-                Dictionary<string, object> items = null;
-
-                if (string.IsNullOrEmpty(fileJson))
-                {
-                    items = new Dictionary<string, object>();
-                }
-                else
-                {
-                    string decryptedJson = Cryptography.Decrypt(fileJson, settings.SecurityMode, settings.Password);
-
-                    items = JsonSerialiser.Deserialise<Dictionary<string, object>>(decryptedJson) ?? new Dictionary<string, object>();
-
-                    if (items.ContainsKey(key))
-                    {
-                        items.Remove(key);
-                    }
-                }
-
-                items.Add(key, TypeHelper.ReplaceIfUnityType(value));
-
-                string jsonToSave = JsonSerialiser.Serialise(items);
-
-                string encryptedJson = Cryptography.Encrypt(jsonToSave, settings.SecurityMode, settings.Password);
-
-                FileAccess.SaveString(root, false, encryptedJson);
-
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        /// <summary>
         /// Creates a QuickSaveWriter on the specified root using the specified settings
         /// </summary>
         /// <param name="root">The root to write to</param>
@@ -110,7 +37,7 @@ namespace CI.QuickSave
         public static QuickSaveWriter Create(string root, QuickSaveSettings settings)
         {
             QuickSaveWriter quickSaveWriter = new QuickSaveWriter(root, settings);
-            quickSaveWriter.Open();
+            quickSaveWriter.Load(true);
             return quickSaveWriter;
         }
 
@@ -123,12 +50,12 @@ namespace CI.QuickSave
         /// <returns>The QuickSaveWriter</returns>
         public QuickSaveWriter Write<T>(string key, T value)
         {
-            if (_items.ContainsKey(key))
+            if (Exists(key))
             {
                 _items.Remove(key);
             }
 
-            _items.Add(key, TypeHelper.ReplaceIfUnityType(value));
+            _items.Add(key, JsonSerialiser.SerialiseKey(value));
 
             return this;
         }
@@ -139,29 +66,10 @@ namespace CI.QuickSave
         /// <param name="key">The key to delete</param>
         public void Delete(string key)
         {
-            if (_items.ContainsKey(key))
+            if (Exists(key))
             {
                 _items.Remove(key);
             }
-        }
-
-        /// <summary>
-        /// Determines if the specified key exists
-        /// </summary>
-        /// <param name="key">The key to look for</param>
-        /// <returns>Does the key exist</returns>
-        public bool Exists(string key)
-        {
-            return _items.ContainsKey(key);
-        }
-
-        /// <summary>
-        /// Gets the names of all the keys
-        /// </summary>
-        /// <returns>A collection of key names</returns>
-        public IEnumerable<string> GetAllKeys()
-        {
-            return _items.Keys.ToList();
         }
 
         /// <summary>
@@ -169,32 +77,7 @@ namespace CI.QuickSave
         /// </summary>
         public void Commit()
         {
-            string jsonToSave;
-
-            try
-            {
-                jsonToSave = JsonSerialiser.Serialise(_items);
-            }
-            catch (Exception e)
-            {
-                throw new QuickSaveException("Json serialisation failed", e);
-            }
-
-            string encryptedJson;
-
-            try
-            {
-                encryptedJson = Cryptography.Encrypt(jsonToSave, _settings.SecurityMode, _settings.Password);
-            }
-            catch (Exception e)
-            {
-                throw new QuickSaveException("Encryption failed", e);
-            }
-
-            if(!FileAccess.SaveString(_root, false, encryptedJson))
-            {
-                throw new QuickSaveException("Failed to write to file");
-            }
+            Save();
         }
 
         /// <summary>
@@ -205,49 +88,13 @@ namespace CI.QuickSave
         {
             try
             {
-                string jsonToSave = JsonSerialiser.Serialise(_items);
-
-                string encryptedJson = Cryptography.Encrypt(jsonToSave, _settings.SecurityMode, _settings.Password);
-
-                FileAccess.SaveString(_root, false, encryptedJson);
+                Save();
 
                 return true;
             }
             catch
             {
                 return false;
-            }
-        }
-
-        private void Open()
-        {
-            string fileJson = FileAccess.LoadString(_root, false);
-
-            if(string.IsNullOrEmpty(fileJson))
-            {
-                _items = new Dictionary<string, object>();
-
-                return;
-            }
-
-            string decryptedJson;
-
-            try
-            {
-                decryptedJson = Cryptography.Decrypt(fileJson, _settings.SecurityMode, _settings.Password);
-            }
-            catch (Exception e)
-            {
-                throw new QuickSaveException("Decryption failed", e);
-            }
-
-            try
-            {
-                _items = JsonSerialiser.Deserialise<Dictionary<string, object>>(decryptedJson) ?? new Dictionary<string, object>();
-            }
-            catch (Exception e)
-            {
-                throw new QuickSaveException("Failed to deserialise json", e);
             }
         }
     }

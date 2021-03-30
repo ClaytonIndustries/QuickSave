@@ -7,21 +7,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using CI.QuickSave.Core.Security;
 using CI.QuickSave.Core.Serialisers;
-using CI.QuickSave.Core.Storage;
 
 namespace CI.QuickSave
 {
-    public class QuickSaveReader
+    public class QuickSaveReader : QuickSaveBase
     {
-        private readonly string _root;
-        private readonly QuickSaveSettings _settings;
-
-        private Dictionary<string, object> _items;
-
         private QuickSaveReader(string root, QuickSaveSettings settings)
         {
             _root = root;
@@ -47,64 +38,8 @@ namespace CI.QuickSave
         public static QuickSaveReader Create(string root, QuickSaveSettings settings)
         {
             QuickSaveReader quickSaveReader = new QuickSaveReader(root, settings);
-            quickSaveReader.Open();
+            quickSaveReader.Load(false);
             return quickSaveReader;
-        }
-
-        /// <summary>
-        /// Attempts to load an object from a root under the specified key
-        /// </summary>
-        /// <typeparam name="T">The type of object to load</typeparam>
-        /// <param name="root">The root this object was saved under</param>
-        /// <param name="key">The key this object was saved under</param>
-        /// <param name="result">The object that was loaded</param>
-        /// <returns>Was the load successful</returns>
-        public static bool TryLoad<T>(string root, string key, out T result)
-        {
-            return TryLoad(root, key, new QuickSaveSettings(), out result);
-        }
-
-        /// <summary>
-        /// Attempts to load an object from a root under the specified key using the specified settings
-        /// </summary>
-        /// <typeparam name="T">The type of object to load</typeparam>
-        /// <param name="root">The root this object was saved under</param>
-        /// <param name="key">The key this object was saved under</param>
-        /// <param name="settings">Settings</param>
-        /// <param name="result">The object that was loaded</param>
-        /// <returns>Was the load successful</returns>
-        public static bool TryLoad<T>(string root, string key, QuickSaveSettings settings, out T result)
-        {
-            result = default(T);
-
-            try
-            {
-                string fileJson = FileAccess.LoadString(root, false);
-
-                if (string.IsNullOrEmpty(fileJson))
-                {
-                    return false;
-                }
-
-                string decryptedJson = Cryptography.Decrypt(fileJson, settings.SecurityMode, settings.Password);
-
-                Dictionary<string, object> items = JsonSerialiser.Deserialise<Dictionary<string, object>>(decryptedJson) ?? new Dictionary<string, object>();
-
-                if (!items.ContainsKey(key))
-                {
-                    return false;
-                }
-
-                string propertyJson = JsonSerialiser.Serialise(items[key]);
-
-                result = JsonSerialiser.Deserialise<T>(propertyJson);
-
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
         }
 
         /// <summary>
@@ -115,20 +50,18 @@ namespace CI.QuickSave
         /// <returns>The object that was loaded</returns>
         public T Read<T>(string key)
         {
-            if (!_items.ContainsKey(key))
+            if (!Exists(key))
             {
                 throw new QuickSaveException("Key does not exists");
             }
 
             try
             {
-                string propertyJson = JsonSerialiser.Serialise(_items[key]);
-
-                return JsonSerialiser.Deserialise<T>(propertyJson);
+                return JsonSerialiser.DeserialiseKey<T>(key, _items);
             }
             catch
             {
-                throw new QuickSaveException("Unable to deserialise json");
+                throw new QuickSaveException("Deserialisation failed");
             }
         }
 
@@ -141,20 +74,18 @@ namespace CI.QuickSave
         /// <returns>The QuickSaveReader</returns>
         public QuickSaveReader Read<T>(string key, Action<T> result)
         {
-            if (!_items.ContainsKey(key))
+            if (!Exists(key))
             {
                 throw new QuickSaveException("Key does not exists");
             }
 
             try
             {
-                string propertyJson = JsonSerialiser.Serialise(_items[key]);
-
-                result(JsonSerialiser.Deserialise<T>(propertyJson));
+                result(JsonSerialiser.DeserialiseKey<T>(key, _items));
             }
             catch
             {
-                throw new QuickSaveException("Unable to deserialise json");
+                throw new QuickSaveException("Deserialisation failed");
             }
 
             return this;
@@ -171,16 +102,14 @@ namespace CI.QuickSave
         {
             result = default(T);
 
-            if (!_items.ContainsKey(key))
+            if (!Exists(key))
             {
                 return false;
             }
 
             try
             {
-                string propertyJson = JsonSerialiser.Serialise(_items[key]);
-
-                result = JsonSerialiser.Deserialise<T>(propertyJson);
+                result = JsonSerialiser.DeserialiseKey<T>(key, _items);
 
                 return true;
             }
@@ -191,52 +120,11 @@ namespace CI.QuickSave
         }
 
         /// <summary>
-        /// Determines if the specified key exists
+        /// Reloads data from the root
         /// </summary>
-        /// <param name="key">The key to look for</param>
-        /// <returns>Does the key exist</returns>
-        public bool Exists(string key)
+        public void Reload()
         {
-            return _items.ContainsKey(key);
-        }
-
-        /// <summary>
-        /// Gets the names of all the keys
-        /// </summary>
-        /// <returns>A collection of key names</returns>
-        public IEnumerable<string> GetAllKeys()
-        {
-            return _items.Keys.ToList();
-        }
-
-        private void Open()
-        {
-            string fileJson = FileAccess.LoadString(_root, false);
-
-            if (string.IsNullOrEmpty(fileJson))
-            {
-                throw new QuickSaveException("Root does not exist");
-            }
-
-            string decryptedJson;
-
-            try
-            {
-                decryptedJson = Cryptography.Decrypt(fileJson, _settings.SecurityMode, _settings.Password);
-            }
-            catch (Exception e)
-            {
-                throw new QuickSaveException("Decryption failed", e);
-            }
-
-            try
-            {
-                _items = JsonSerialiser.Deserialise<Dictionary<string, object>>(decryptedJson);
-            }
-            catch (Exception e)
-            {
-                throw new QuickSaveException("Failed to deserialise json", e);
-            }
+            Load(false);
         }
     }
 }
