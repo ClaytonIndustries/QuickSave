@@ -70,7 +70,7 @@ namespace CI.QuickSave
         /// <param name="content">The byte array to save</param>
         public static void SaveBytes(string filename, byte[] content)
         {
-            if (FileAccess.SaveBytes(filename, true, content))
+            if (!FileAccess.SaveBytes(filename, true, content))
             {
                 throw new QuickSaveException("Failed to write to file");
             }
