@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 using System.Collections.Generic;
+using System.Linq;
 using CI.QuickSave.Core.Converters;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -30,7 +31,17 @@ namespace CI.QuickSave.Core.Serialisers
             }
         };
 
-        private static JsonSerializer _serialiser = JsonSerializer.Create(_settings);
+        private static readonly JsonSerializer _serialiser = JsonSerializer.Create(_settings);
+
+        public static void RegisterConverter(JsonConverter converter)
+        {
+            var canRegister = !_settings.Converters.Any(x => x.GetType() == converter.GetType());
+
+            if (canRegister) 
+            {
+                _settings.Converters.Add(converter);
+            }
+        }
 
         public static T DeserialiseKey<T>(string key, JObject data)
         {
