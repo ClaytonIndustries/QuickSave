@@ -5,7 +5,7 @@ Quick Save is a plugin that makes it easy to save and load content to / from fil
 
 ## Requirements
 
- * Unity 2018.4 or above
+ * Unity 2019.4 or above
 
 ## Built with
 
