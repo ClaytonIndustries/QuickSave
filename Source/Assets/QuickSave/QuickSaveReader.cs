@@ -1,12 +1,13 @@
 ﻿////////////////////////////////////////////////////////////////////////////////
-//  
-// @module Quick Save for Unity3D 
+//
+// @module Quick Save for Unity3D
 // @author Michael Clayton
-// @support clayton.inds+support@gmail.com 
+// @support clayton.inds+support@gmail.com
 //
 ////////////////////////////////////////////////////////////////////////////////
 
 using System;
+using System.Threading.Tasks;
 using CI.QuickSave.Core.Serialisers;
 
 namespace CI.QuickSave
@@ -89,6 +90,27 @@ namespace CI.QuickSave
             }
 
             return this;
+        }
+
+        /// <summary>
+        /// Reads an object under the specified key asynchronously.
+        /// </summary>
+        /// <typeparam name="T">The type of object to read</typeparam>
+        /// <param name="key">The key this object was saved under</param>
+        /// <returns>The object that was loaded.</returns>
+        public async Task<T> ReadAsync<T>(string key)
+        {
+            T result = default;
+            Task read = new Task(() =>
+            {
+                result = Read<T>(key);
+            });
+
+            read.Start();
+            await read;
+            read.Dispose();
+
+            return result;
         }
 
         /// <summary>
