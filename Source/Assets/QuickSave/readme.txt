@@ -1,4 +1,4 @@
-﻿Quick Save (v2.2)
+﻿Quick Save (v2.3)
 ----------------------------
 
 Thank you for downloading Quick Save we hope you enjoy using it!

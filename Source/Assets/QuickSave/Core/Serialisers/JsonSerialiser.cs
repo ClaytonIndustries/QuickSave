@@ -35,11 +35,11 @@ namespace CI.QuickSave.Core.Serialisers
 
         public static void RegisterConverter(JsonConverter converter)
         {
-            var canRegister = !_settings.Converters.Any(x => x.GetType() == converter.GetType());
+            var canRegister = !_serialiser.Converters.Any(x => x.GetType() == converter.GetType());
 
             if (canRegister) 
             {
-                _settings.Converters.Add(converter);
+                _serialiser.Converters.Add(converter);
             }
         }
 
