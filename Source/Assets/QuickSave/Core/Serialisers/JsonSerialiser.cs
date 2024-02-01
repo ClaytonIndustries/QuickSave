@@ -27,7 +27,8 @@ namespace CI.QuickSave.Core.Serialisers
                 new SpriteConverter(),
                 new Vector2Converter(),
                 new Vector3Converter(),
-                new Vector4Converter()
+                new Vector4Converter(),
+                new TransformConverter()
             }
         };
 
@@ -43,19 +44,10 @@ namespace CI.QuickSave.Core.Serialisers
             }
         }
 
-        public static T DeserialiseKey<T>(string key, JObject data)
-        {
-            return data[key].ToObject<T>(_serialiser);
-        }
+        public static T DeserialiseKey<T>(string key, JObject data) => data[key].ToObject<T>(_serialiser);
 
-        public static JToken SerialiseKey<T>(T data)
-        {
-            return JToken.FromObject(data, _serialiser);
-        }
+        public static JToken SerialiseKey<T>(T data) => JToken.FromObject(data, _serialiser);
 
-        public static string Serialise<T>(T value)
-        {
-            return JsonConvert.SerializeObject(value, _settings);
-        }
+        public static string Serialise<T>(T value) => JsonConvert.SerializeObject(value, _settings);
     }
 }
