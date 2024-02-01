@@ -4,7 +4,7 @@ using System.IO.Compression;
 using System.Text;
 using CICompressionMode = CI.QuickSave.CompressionMode;
 
-namespace CI.QuickSave.Core.Settings
+namespace CI.QuickSave.Core.Util
 {
     public class Compression
     {

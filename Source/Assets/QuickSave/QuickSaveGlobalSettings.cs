@@ -1,4 +1,12 @@
-﻿using CI.QuickSave.Core.Serialisers;
+﻿////////////////////////////////////////////////////////////////////////////////
+//  
+// @module Quick Save for Unity3D 
+// @author Michael Clayton
+// @support clayton.inds+support@gmail.com 
+//
+////////////////////////////////////////////////////////////////////////////////
+
+using CI.QuickSave.Core.Serialisers;
 using Newtonsoft.Json;
 using UnityEngine;
 

@@ -11,7 +11,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace CI.QuickSave.Core.Settings
+namespace CI.QuickSave.Core.Util
 {
     public static class Cryptography
     {
