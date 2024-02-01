@@ -121,5 +121,12 @@ namespace CI.QuickSave
                 throw new QuickSaveException("Failed to write to file");
             }
         }
+
+        /// <summary>
+        /// Determines whether the specified root exists
+        /// </summary>
+        /// <param name="root">The root to check</param>
+        /// <returns>Does the root exist</returns>
+        public static bool RootExists(string root) => FileAccess.Exists(root, false);
     }
 }
