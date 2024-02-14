@@ -30,6 +30,12 @@ namespace CI.QuickSave
         public static bool RootExists(string root) => FileAccess.Exists(FileAccess.GetPathFromBase(root));
 
         /// <summary>
+        /// Deletes the specified root if it exists
+        /// </summary>
+        /// <param name="root">The root to delete</param>
+        public static void DeleteRoot(string root) => FileAccess.Delete(FileAccess.GetPathFromBase(root));
+
+        /// <summary>
         /// Determines if the specified key exists
         /// </summary>
         /// <param name="key">The key to look for</param>

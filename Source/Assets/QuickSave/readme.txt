@@ -1,4 +1,4 @@
-﻿Quick Save (v3.0.0)
+﻿Quick Save (v3.1.0)
 ----------------------------
 
 Thank you for downloading Quick Save we hope you enjoy using it!
@@ -9,6 +9,8 @@ If you would like to see any features added please get in touch
 
 Support Website: http://www.claytoninds.com/
 Support Email: clayton.inds+support@gmail.com
+
+*** Please consider leaving us a review on the asset store ***
 
 ------------------------------------------------------------------------------------------------------------------------
 Why not check out our other plugins:
