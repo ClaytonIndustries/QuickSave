@@ -1,7 +1,7 @@
 fileFormatVersion: 2
 guid: 5379bdb6a8a43df4b92e95f651997316
 timeCreated: 1513892294
-licenseType: Free
+licenseType: Store
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
@@ -11,3 +11,10 @@ MonoImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 107676
+  packageName: Quick Save
+  packageVersion: 3.1.0
+  assetPath: Assets/QuickSave/Core/Serialisers/JsonSerialiser.cs
+  uploadId: 644299

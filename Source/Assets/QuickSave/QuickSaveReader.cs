@@ -1,12 +1,14 @@
 ﻿////////////////////////////////////////////////////////////////////////////////
-//  
-// @module Quick Save for Unity3D 
+//
+// @module Quick Save for Unity3D
 // @author Michael Clayton
-// @support clayton.inds+support@gmail.com 
+// @support clayton.inds+support@gmail.com
 //
 ////////////////////////////////////////////////////////////////////////////////
 
 using System;
+using System.Threading.Tasks;
+using UnityEngine;
 using CI.QuickSave.Core.Serialisers;
 
 namespace CI.QuickSave
@@ -100,7 +102,7 @@ namespace CI.QuickSave
         /// <returns>Was the read successful</returns>
         public bool TryRead<T>(string key, out T result)
         {
-            result = default(T);
+            result = default;
 
             if (!Exists(key))
             {
@@ -126,5 +128,22 @@ namespace CI.QuickSave
         {
             Load(false);
         }
+
+#if UNITY_2023_1_OR_NEWER
+        /// <summary>
+        /// Reads an object under the specified key asynchronously.
+        /// </summary>
+        /// <typeparam name="T">The type of object to read</typeparam>
+        /// <param name="key">The key this object was saved under</param>
+        /// <returns>The object that was loaded.</returns>
+        public async Task<T> ReadAsync<T>(string key)
+        {
+            await Awaitable.BackgroundThreadAsync();
+            T result = Read<T>(key);
+            await Awaitable.MainThreadAsync();
+
+            return result;
+        }
+#endif
     }
 }

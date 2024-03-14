@@ -1,9 +1,16 @@
 fileFormatVersion: 2
 guid: 64881a114483a1045a3edd22bf0da0b1
 timeCreated: 1513279415
-licenseType: Free
+licenseType: Store
 DefaultImporter:
   externalObjects: {}
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 107676
+  packageName: Quick Save
+  packageVersion: 3.1.0
+  assetPath: Assets/QuickSave/Example/ExampleScene.unity
+  uploadId: 644299

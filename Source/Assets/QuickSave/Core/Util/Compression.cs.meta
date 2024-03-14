@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 817de1a2bae69cd4ea6ae0f597461257
+guid: a1ce8dad672563c4cb33b89cf734e5da
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
@@ -14,5 +14,5 @@ AssetOrigin:
   productId: 107676
   packageName: Quick Save
   packageVersion: 3.1.0
-  assetPath: Assets/QuickSave/CompressionMode.cs
+  assetPath: Assets/QuickSave/Core/Util/Compression.cs
   uploadId: 644299

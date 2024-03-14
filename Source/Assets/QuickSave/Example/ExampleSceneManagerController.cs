@@ -1,4 +1,13 @@
-﻿using CI.QuickSave;
+﻿////////////////////////////////////////////////////////////////////////////////
+//  
+// @module Quick Save for Unity3D 
+// @author Michael Clayton
+// @support clayton.inds+support@gmail.com 
+//
+////////////////////////////////////////////////////////////////////////////////
+
+using System.IO;
+using CI.QuickSave;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -23,7 +32,7 @@ public class ExampleSceneManagerController : MonoBehaviour
                        .Write("Input4", Input4.text)
                        .Commit();
 
-        Content.text = QuickSaveRaw.LoadString("Inputs.json");
+        Content.text = QuickSaveRaw.LoadString(Path.Combine(QuickSaveGlobalSettings.StorageLocation, "QuickSave", "Inputs.json"));
     }
 
     public void Load()
@@ -39,12 +48,12 @@ public class ExampleSceneManagerController : MonoBehaviour
     {
         // Use QuickSaveRaw to directly save / load text or binary data to / from files
 
-        QuickSaveRaw.SaveString("TextFile.txt", "Some text to save");
-        QuickSaveRaw.SaveBytes("BytesFile.txt", new byte[] { 1, 2, 3, 4 });
+        QuickSaveRaw.SaveString($"{Application.persistentDataPath}/TextFile.txt", "Some text to save");
+        QuickSaveRaw.SaveBytes($"{Application.persistentDataPath}/BytesFile.txt", new byte[] { 1, 2, 3, 4 });
 
 #pragma warning disable 0219
-        string text = QuickSaveRaw.LoadString("TextFile.txt");
-        byte[] bytes = QuickSaveRaw.LoadBytes("BytesFile.txt");
+        string text = QuickSaveRaw.LoadString($"{Application.persistentDataPath}/TextFile.txt");
+        byte[] bytes = QuickSaveRaw.LoadBytes($"{Application.persistentDataPath}/BytesFile.txt");
 #pragma warning restore 0219
     }
 
@@ -100,5 +109,24 @@ public class ExampleSceneManagerController : MonoBehaviour
         writer.Write("Key3", three);
         writer.Write("Key4", four);
         writer.Commit();
+    }
+
+    public void QuickSaveCsvExample()
+    {
+        // Use QuickSaveCsv to save and load csv files
+
+        var csv = new QuickSaveCsv();
+
+        csv.SetCell(0, 0, "Test");
+        csv.SetCell(3, 5, "Yooooo");
+        csv.SetCell(0, 10, 32);
+        csv.SetCell(8, 3, true);
+        csv.SetCell(8, 0, 23.567);
+        csv.Save($"{Application.persistentDataPath}/test.csv");
+
+        csv = QuickSaveCsv.Load($"{Application.persistentDataPath}/test.csv");
+#pragma warning disable 0219
+        var cell = csv.GetCell(0, 0);
+#pragma warning restore 0219
     }
 }
