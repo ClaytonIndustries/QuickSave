@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 using System.Threading.Tasks;
+using UnityEngine;
 using CI.QuickSave.Core.Serialisers;
 
 namespace CI.QuickSave
@@ -62,24 +63,6 @@ namespace CI.QuickSave
         }
 
         /// <summary>
-        /// Writes an object to the specified key asynchronously - you must called commit to write the data to file.
-        /// </summary>
-        /// <typeparam name="T">The type of object to write.</typeparam>
-        /// <param name="key">The key this object will be saved under.</param>
-        /// <param name="value">The object to save.</param>
-        public async Task WriteAsync<T>(string key, T value)
-        {
-            Task write = new Task(() =>
-            {
-                Write<T>(key, value);
-            });
-
-            write.Start();
-            await write;
-            write.Dispose();
-        }
-
-        /// <summary>
         /// Deletes the specified key if it exists
         /// </summary>
         /// <param name="key">The key to delete</param>
@@ -100,18 +83,6 @@ namespace CI.QuickSave
         }
 
         /// <summary>
-        /// Commits the changes to file asynchronously
-        /// </summary>
-        public async Task CommitAsync()
-        {
-            Task commit = new Task(Save);
-
-            commit.Start();
-            await commit;
-            commit.Dispose();
-        }
-
-        /// <summary>
         /// Attempts to commit the changes to file
         /// </summary>
         /// <returns>Was the commit successful</returns>
@@ -129,29 +100,32 @@ namespace CI.QuickSave
             }
         }
 
+#if UNITY_2023_1_OR_NEWER
+        /// <summary>
+        /// Writes an object to the specified key asynchronously - you must called commit to write the data to file.
+        /// </summary>
+        /// <typeparam name="T">The type of object to write.</typeparam>
+        /// <param name="key">The key this object will be saved under.</param>
+        /// <param name="value">The object to save.</param>
+        public async Task WriteAsync<T>(string key, T value)
+        {
+            await Awaitable.BackgroundThreadAsync();
+            Write(key, value);
+            await Awaitable.MainThreadAsync();
+        }
+
         /// <summary>
         /// Attempts to commit the changes to file asynchronously
         /// </summary>
         /// <returns>Was the commit successful</returns>
         public async Task<bool> TryCommitAsync()
         {
-            bool result = false;
-            Task commit = new Task(() =>
-            {
-                try
-                {
-                    Save();
-
-                    result = true;
-                }
-                catch { }
-            });
-
-            commit.Start();
-            await commit;
-            commit.Dispose();
+            await Awaitable.BackgroundThreadAsync();
+            bool result = TryCommit();
+            await Awaitable.MainThreadAsync();
 
             return result;
         }
+#endif
     }
 }

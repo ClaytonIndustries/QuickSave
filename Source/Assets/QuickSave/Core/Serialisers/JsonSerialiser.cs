@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 using System.Collections.Generic;
+using System.Linq;
 using CI.QuickSave.Core.Converters;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -26,25 +27,27 @@ namespace CI.QuickSave.Core.Serialisers
                 new SpriteConverter(),
                 new Vector2Converter(),
                 new Vector3Converter(),
-                new Vector4Converter()
+                new Vector4Converter(),
+                new TransformConverter()
             }
         };
 
-        private static JsonSerializer _serialiser = JsonSerializer.Create(_settings);
+        private static readonly JsonSerializer _serialiser = JsonSerializer.Create(_settings);
 
-        public static T DeserialiseKey<T>(string key, JObject data)
+        public static void RegisterConverter(JsonConverter converter)
         {
-            return data[key].ToObject<T>(_serialiser);
+            var canRegister = !_serialiser.Converters.Any(x => x.GetType() == converter.GetType());
+
+            if (canRegister) 
+            {
+                _serialiser.Converters.Add(converter);
+            }
         }
 
-        public static JToken SerialiseKey<T>(T data)
-        {
-            return JToken.FromObject(data, _serialiser);
-        }
+        public static T DeserialiseKey<T>(string key, JObject data) => data[key].ToObject<T>(_serialiser);
 
-        public static string Serialise<T>(T value)
-        {
-            return JsonConvert.SerializeObject(value, _settings);
-        }
+        public static JToken SerialiseKey<T>(T data) => JToken.FromObject(data, _serialiser);
+
+        public static string Serialise<T>(T value) => JsonConvert.SerializeObject(value, _settings);
     }
 }

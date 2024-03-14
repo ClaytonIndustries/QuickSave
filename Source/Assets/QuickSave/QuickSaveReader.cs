@@ -8,6 +8,7 @@
 
 using System;
 using System.Threading.Tasks;
+using UnityEngine;
 using CI.QuickSave.Core.Serialisers;
 
 namespace CI.QuickSave
@@ -93,27 +94,6 @@ namespace CI.QuickSave
         }
 
         /// <summary>
-        /// Reads an object under the specified key asynchronously.
-        /// </summary>
-        /// <typeparam name="T">The type of object to read</typeparam>
-        /// <param name="key">The key this object was saved under</param>
-        /// <returns>The object that was loaded.</returns>
-        public async Task<T> ReadAsync<T>(string key)
-        {
-            T result = default;
-            Task read = new Task(() =>
-            {
-                result = Read<T>(key);
-            });
-
-            read.Start();
-            await read;
-            read.Dispose();
-
-            return result;
-        }
-
-        /// <summary>
         /// Attempts to read an object under the specified key
         /// </summary>
         /// <typeparam name="T">The type of object to read</typeparam>
@@ -122,7 +102,7 @@ namespace CI.QuickSave
         /// <returns>Was the read successful</returns>
         public bool TryRead<T>(string key, out T result)
         {
-            result = default(T);
+            result = default;
 
             if (!Exists(key))
             {
@@ -148,5 +128,22 @@ namespace CI.QuickSave
         {
             Load(false);
         }
+
+#if UNITY_2023_1_OR_NEWER
+        /// <summary>
+        /// Reads an object under the specified key asynchronously.
+        /// </summary>
+        /// <typeparam name="T">The type of object to read</typeparam>
+        /// <param name="key">The key this object was saved under</param>
+        /// <returns>The object that was loaded.</returns>
+        public async Task<T> ReadAsync<T>(string key)
+        {
+            await Awaitable.BackgroundThreadAsync();
+            T result = Read<T>(key);
+            await Awaitable.MainThreadAsync();
+
+            return result;
+        }
+#endif
     }
 }
