@@ -1,9 +1,16 @@
 fileFormatVersion: 2
 guid: cb7af4f536fc1c740a556be8bff08b23
 timeCreated: 1513279371
-licenseType: Free
+licenseType: Store
 TextScriptImporter:
   externalObjects: {}
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 107676
+  packageName: Quick Save
+  packageVersion: 3.1.0
+  assetPath: Assets/QuickSave/readme.txt
+  uploadId: 644299

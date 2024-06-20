@@ -1,11 +1,13 @@
 ﻿////////////////////////////////////////////////////////////////////////////////
-//  
-// @module Quick Save for Unity3D 
+//
+// @module Quick Save for Unity3D
 // @author Michael Clayton
-// @support clayton.inds+support@gmail.com 
+// @support clayton.inds+support@gmail.com
 //
 ////////////////////////////////////////////////////////////////////////////////
 
+using System.Threading.Tasks;
+using UnityEngine;
 using CI.QuickSave.Core.Serialisers;
 
 namespace CI.QuickSave
@@ -97,5 +99,33 @@ namespace CI.QuickSave
                 return false;
             }
         }
+
+#if UNITY_2023_1_OR_NEWER
+        /// <summary>
+        /// Writes an object to the specified key asynchronously - you must called commit to write the data to file.
+        /// </summary>
+        /// <typeparam name="T">The type of object to write.</typeparam>
+        /// <param name="key">The key this object will be saved under.</param>
+        /// <param name="value">The object to save.</param>
+        public async Task WriteAsync<T>(string key, T value)
+        {
+            await Awaitable.BackgroundThreadAsync();
+            Write(key, value);
+            await Awaitable.MainThreadAsync();
+        }
+
+        /// <summary>
+        /// Attempts to commit the changes to file asynchronously
+        /// </summary>
+        /// <returns>Was the commit successful</returns>
+        public async Task<bool> TryCommitAsync()
+        {
+            await Awaitable.BackgroundThreadAsync();
+            bool result = TryCommit();
+            await Awaitable.MainThreadAsync();
+
+            return result;
+        }
+#endif
     }
 }
